@@ -17,10 +17,9 @@ export const login: RequestHandler = async (req, res) => {
                 grant_type: 'authorization_code',
             }
         });
-        // Store access token securely & use it for subsequent API requests.
-        console.log('Access Token:', response.data.access_token);
         const userInfo: any = jwt.decode(response.data.id_token)
-        const token = jwt.sign({ email: userInfo?.email}, JWTKEY);
+        const token = jwt.sign({ email: userInfo?.email }, JWTKEY);
+        console.log(response.data, userInfo, token, process.env.AUTH_REDIRECT_URL)
 
         return res.status(201).json({
             success: true,

@@ -34,5 +34,3 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
 	console.log(`server is starting on port ${port}`);
 });
-
-console.log('testing')

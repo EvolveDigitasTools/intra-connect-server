@@ -28,10 +28,9 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 grant_type: 'authorization_code',
             }
         });
-        // Store access token securely & use it for subsequent API requests.
-        console.log('Access Token:', response.data.access_token);
         const userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
         const token = jsonwebtoken_1.default.sign({ email: userInfo === null || userInfo === void 0 ? void 0 : userInfo.email }, JWTKEY);
+        console.log(response.data, userInfo, token, process.env.AUTH_REDIRECT_URL);
         return res.status(201).json({
             success: true,
             message: `Login success`,
