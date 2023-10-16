@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateLogin = void 0;
+exports.validateNew = exports.validateLogin = void 0;
 const joi_1 = __importDefault(require("joi"));
 const validateLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -31,3 +31,21 @@ const validateLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.validateLogin = validateLogin;
+const validateNew = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const validateNew = joi_1.default.object({
+            email: joi_1.default.string().email().required(),
+            department: joi_1.default.string().required()
+        });
+        yield validateNew.validateAsync(req.body);
+        next();
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+});
+exports.validateNew = validateNew;

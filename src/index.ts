@@ -1,9 +1,8 @@
+import './config/config';
 import express from "express";
 import cors from "cors";
 import multer from "multer";
-import * as dotenv from "dotenv";
 
-dotenv.config({path:"./src/config/config.env"});
 import connection from "./db/connection"
 
 import routes from "./routes/routes";

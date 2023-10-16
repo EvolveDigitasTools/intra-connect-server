@@ -21,18 +21,10 @@ export default class User extends Model {
     })
     email!: string;
 
-    @AllowNull(false)
     @Column({
         type: DataType.STRING
     })
     name!: string;
-
-    @AllowNull(false)
-    @Default('normal')
-    @Column({
-        type: DataType.STRING
-    })
-    role!: string;
 
     @HasMany(() => UserDepartment)
     departments!: UserDepartment[];

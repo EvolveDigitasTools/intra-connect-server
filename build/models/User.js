@@ -29,18 +29,10 @@ __decorate([
     })
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, sequelize_typescript_1.AllowNull)(false),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING
     })
 ], User.prototype, "name", void 0);
-__decorate([
-    (0, sequelize_typescript_1.AllowNull)(false),
-    (0, sequelize_typescript_1.Default)('normal'),
-    (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING
-    })
-], User.prototype, "role", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => UserDepartment_1.default)
 ], User.prototype, "departments", void 0);

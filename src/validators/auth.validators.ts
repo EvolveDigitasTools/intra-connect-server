@@ -18,3 +18,22 @@ export const validateLogin: RequestHandler = async (req, res, next) => {
         });
     }
 }
+
+export const validateNew: RequestHandler = async (req, res, next) => {
+    try {
+        const validateNew = Joi.object({
+            email: Joi.string().email().required(),
+            department: Joi.string().required()
+        })
+
+        await validateNew.validateAsync(req.body);
+        next();
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+}

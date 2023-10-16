@@ -1,6 +1,9 @@
 import axios from "axios";
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
+import Department from "../models/Department";
+import User from "../models/User";
+import UserDepartment from "../models/UserDepartment";
 
 const JWTKEY: string = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";
 
@@ -19,8 +22,7 @@ export const login: RequestHandler = async (req, res) => {
         });
         const userInfo: any = jwt.decode(response.data.id_token)
         const token = jwt.sign({ email: userInfo?.email }, JWTKEY);
-        console.log(response.data, userInfo, token, process.env.AUTH_REDIRECT_URL)
-
+        
         return res.status(201).json({
             success: true,
             message: `Login success`,
@@ -43,6 +45,51 @@ export const login: RequestHandler = async (req, res) => {
             message: error.message,
             data: {
                 "source": "auth.controller.js -> login"
+            },
+        });
+    }
+};
+
+export const newEmployee: RequestHandler = async (req, res) => {
+    try {
+        const { email, department } = req.body;
+
+        let employeeDepartment = await Department.findOne({where: {name: department}})
+        console.log(employeeDepartment, department)
+        if(!employeeDepartment){
+            employeeDepartment = await Department.create({
+                name: department
+            })
+        }
+        let newEmployee = await User.create({
+            email
+        })
+
+        let employeeDepartmentRel = await UserDepartment.create({
+            userId: newEmployee.id,
+            departmentId: employeeDepartment.id
+        })
+
+        if(employeeDepartmentRel)
+        return res.status(201).json({
+            success: true,
+            message: `Employee Added`,
+            data: {
+            },
+        });
+        else 
+        return res.status(400).json({
+            success: false,
+            message: 'Some error occured in auth.controller.ts -> newEmployee',
+            data: {}
+        })
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "auth.controller.js -> newEmployee"
             },
         });
     }

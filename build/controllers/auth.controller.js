@@ -12,9 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.newEmployee = exports.login = void 0;
 const axios_1 = __importDefault(require("axios"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const Department_1 = __importDefault(require("../models/Department"));
+const User_1 = __importDefault(require("../models/User"));
+const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
 const JWTKEY = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -30,7 +33,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         const userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
         const token = jsonwebtoken_1.default.sign({ email: userInfo === null || userInfo === void 0 ? void 0 : userInfo.email }, JWTKEY);
-        console.log(response.data, userInfo, token, process.env.AUTH_REDIRECT_URL);
         return res.status(201).json({
             success: true,
             message: `Login success`,
@@ -58,3 +60,44 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const newEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email, department } = req.body;
+        let employeeDepartment = yield Department_1.default.findOne({ where: { name: department } });
+        console.log(employeeDepartment, department);
+        if (!employeeDepartment) {
+            employeeDepartment = yield Department_1.default.create({
+                name: department
+            });
+        }
+        let newEmployee = yield User_1.default.create({
+            email
+        });
+        let employeeDepartmentRel = yield UserDepartment_1.default.create({
+            userId: newEmployee.id,
+            departmentId: employeeDepartment.id
+        });
+        if (employeeDepartmentRel)
+            return res.status(201).json({
+                success: true,
+                message: `Employee Added`,
+                data: {},
+            });
+        else
+            return res.status(400).json({
+                success: false,
+                message: 'Some error occured in auth.controller.ts -> newEmployee',
+                data: {}
+            });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "auth.controller.js -> newEmployee"
+            },
+        });
+    }
+});
+exports.newEmployee = newEmployee;
