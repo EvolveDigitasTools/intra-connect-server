@@ -24,7 +24,17 @@ export default class User extends Model {
     @Column({
         type: DataType.STRING
     })
-    name!: string;
+    accessToken!: string;
+
+    @Column({
+        type: DataType.STRING
+    })
+    zohoAccessToken!: string;
+
+    @Column({
+        type: DataType.STRING
+    })
+    refreshToken!: string;
 
     @HasMany(() => UserDepartment)
     departments!: UserDepartment[];

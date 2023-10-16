@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateNew = exports.validateLogin = void 0;
+exports.validateAuthCode = exports.validateNew = exports.validateLogin = void 0;
 const joi_1 = __importDefault(require("joi"));
+const User_1 = __importDefault(require("../models/User"));
 const validateLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validateLogin = joi_1.default.object({
@@ -49,3 +50,30 @@ const validateNew = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.validateNew = validateNew;
+const validateAuthCode = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log('auth', req.headers, req.header('Authorization'));
+        let authHeader = req.header('Authorization'), accessToken;
+        if (authHeader) {
+            accessToken = authHeader.split(' ')[1];
+        }
+        else {
+            accessToken = 'none';
+        }
+        const user = yield User_1.default.findOne({ where: { accessToken } });
+        if (!user)
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized request'
+            });
+        next();
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+});
+exports.validateAuthCode = validateAuthCode;

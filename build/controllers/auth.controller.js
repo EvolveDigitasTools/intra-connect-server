@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newEmployee = exports.login = void 0;
+exports.newEmployee = exports.logout = exports.login = void 0;
 const axios_1 = __importDefault(require("axios"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Department_1 = __importDefault(require("../models/Department"));
@@ -33,6 +33,22 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         const userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
         const token = jsonwebtoken_1.default.sign({ email: userInfo === null || userInfo === void 0 ? void 0 : userInfo.email }, JWTKEY);
+        const user = yield User_1.default.findOne({ where: { email: userInfo.email } });
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Login Failure. Please ask your admin to register you in the platform'
+            });
+        }
+        User_1.default.update({
+            accessToken: token,
+            zohoAccessToken: response.data.access_token,
+            refreshToken: response.data.refresh_token
+        }, {
+            where: {
+                email: userInfo.email
+            }
+        });
         return res.status(201).json({
             success: true,
             message: `Login success`,
@@ -60,6 +76,34 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User_1.default.findOne({ where: { accessToken: req.header('Authorization') } });
+        User_1.default.update({
+            accessToken: null,
+            zohoAccessToken: null,
+            refreshToken: null
+        }, {
+            where: {
+                email: user === null || user === void 0 ? void 0 : user.email
+            }
+        });
+        return res.status(201).json({
+            success: true,
+            message: `Logout success`
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "auth.controller.js -> logout"
+            },
+        });
+    }
+});
+exports.logout = logout;
 const newEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, department } = req.body;

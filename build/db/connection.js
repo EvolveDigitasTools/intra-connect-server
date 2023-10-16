@@ -41,5 +41,5 @@ const connection = new sequelize_typescript_1.Sequelize({
     port: 3306,
     models: [User_1.default, Department_1.default, UserDepartment_1.default]
 });
-// connection.truncate({ cascade: true, restartIdentity: true });
+// connection.sync({ alter: true });  // Use cautiously
 exports.default = connection;

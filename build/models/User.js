@@ -32,7 +32,17 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING
     })
-], User.prototype, "name", void 0);
+], User.prototype, "accessToken", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], User.prototype, "zohoAccessToken", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], User.prototype, "refreshToken", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => UserDepartment_1.default)
 ], User.prototype, "departments", void 0);

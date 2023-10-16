@@ -15,6 +15,6 @@ const connection = new Sequelize({
   models: [User, Department, UserDepartment]
 });
 
-// connection.truncate({ cascade: true, restartIdentity: true });
+// connection.sync({ alter: true });  // Use cautiously
 
 export default connection;

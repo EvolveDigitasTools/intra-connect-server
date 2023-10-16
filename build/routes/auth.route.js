@@ -6,4 +6,5 @@ const auth_controller_1 = require("../controllers/auth.controller");
 const router = (0, express_1.Router)();
 router.get('/login/:authCode', auth_validators_1.validateLogin, auth_controller_1.login);
 router.post('/new', auth_validators_1.validateNew, auth_controller_1.newEmployee);
+router.post('/logout', auth_validators_1.validateAuthCode, auth_controller_1.logout);
 exports.default = router;
