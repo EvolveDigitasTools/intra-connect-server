@@ -31,6 +31,11 @@ const User_1 = __importDefault(require("../models/User"));
 const mysql = __importStar(require("mysql2"));
 const Department_1 = __importDefault(require("../models/Department"));
 const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
+const DepartmentTicket_1 = require("../models/DepartmentTicket");
+const File_1 = __importDefault(require("../models/File"));
+const Ticket_1 = __importDefault(require("../models/Ticket"));
+const TicketChat_1 = require("../models/TicketChat");
+const UserTicket_1 = require("../models/UserTicket");
 const connection = new sequelize_typescript_1.Sequelize({
     dialect: "mysql",
     dialectModule: mysql,
@@ -39,7 +44,7 @@ const connection = new sequelize_typescript_1.Sequelize({
     password: 'intra-pass',
     database: 'intra_connect',
     port: 3306,
-    models: [User_1.default, Department_1.default, UserDepartment_1.default]
+    models: [User_1.default, Department_1.default, UserDepartment_1.default, DepartmentTicket_1.DepartmentTicket, File_1.default, Ticket_1.default, TicketChat_1.TicketChat, UserTicket_1.UserTicket]
 });
 // connection.sync({ alter: true });  // Use cautiously
 exports.default = connection;

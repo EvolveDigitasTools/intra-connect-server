@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import Department from "../models/Department";
 import User from "../models/User";
 import UserDepartment from "../models/UserDepartment";
+import { Op } from "sequelize";
 
 const JWTKEY: string = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";
 
@@ -68,7 +69,7 @@ export const login: RequestHandler = async (req, res) => {
 
 export const logout: RequestHandler = async (req, res) => {
     try {
-        const user = await User.findOne({where: {accessToken: req.header('Authorization')}})
+        const user = await User.findOne({ where: { accessToken: req.header('Authorization') } })
         User.update({
             accessToken: null,
             zohoAccessToken: null,
@@ -100,7 +101,6 @@ export const newEmployee: RequestHandler = async (req, res) => {
         const { email, department } = req.body;
 
         let employeeDepartment = await Department.findOne({ where: { name: department } })
-        console.log(employeeDepartment, department)
         if (!employeeDepartment) {
             employeeDepartment = await Department.create({
                 name: department
@@ -135,6 +135,34 @@ export const newEmployee: RequestHandler = async (req, res) => {
             message: error.message,
             data: {
                 "source": "auth.controller.js -> newEmployee"
+            },
+        });
+    }
+};
+
+export const getAssignees: RequestHandler = async (req, res) => {
+    try {
+        const users = await User.findAll({ attributes: ['email'] });
+        const departments = await Department.findAll({ attributes: ['name'], where: { 'name': { [Op.ne]: 'All' } } });
+
+        let assignees: string[] = []
+        users.map(user => assignees.push(user.email));
+        departments.map(department => assignees.push(department.name));
+
+        return res.status(201).json({
+            success: true,
+            message: `Assignees Fetched Successfully`,
+            data: {
+                assignees
+            }
+        });
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "auth.controller.js -> getAssignees"
             },
         });
     }

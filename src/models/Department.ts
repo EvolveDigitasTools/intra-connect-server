@@ -1,4 +1,4 @@
-import { Model, Table, Column, DataType, ForeignKey, BelongsTo, AutoIncrement, PrimaryKey, AllowNull, HasMany } from 'sequelize-typescript';
+import { Model, Table, Column, DataType, AutoIncrement, PrimaryKey, AllowNull, HasMany } from 'sequelize-typescript';
 import UserDepartment from './UserDepartment';
 
 @Table({

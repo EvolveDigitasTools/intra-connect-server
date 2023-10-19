@@ -41,7 +41,6 @@ export const validateNew: RequestHandler = async (req, res, next) => {
 
 export const validateAuthCode: RequestHandler = async (req, res, next) => {
     try {
-        console.log('auth',req.headers, req.header('Authorization'))
         let authHeader = req.header('Authorization'), accessToken
         if (authHeader) {
             accessToken = authHeader.split(' ')[1];

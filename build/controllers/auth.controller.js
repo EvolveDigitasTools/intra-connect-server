@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newEmployee = exports.logout = exports.login = void 0;
+exports.getAssignees = exports.newEmployee = exports.logout = exports.login = void 0;
 const axios_1 = __importDefault(require("axios"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Department_1 = __importDefault(require("../models/Department"));
 const User_1 = __importDefault(require("../models/User"));
 const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
+const sequelize_1 = require("sequelize");
 const JWTKEY = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -108,7 +109,6 @@ const newEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const { email, department } = req.body;
         let employeeDepartment = yield Department_1.default.findOne({ where: { name: department } });
-        console.log(employeeDepartment, department);
         if (!employeeDepartment) {
             employeeDepartment = yield Department_1.default.create({
                 name: department
@@ -145,3 +145,29 @@ const newEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.newEmployee = newEmployee;
+const getAssignees = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = yield User_1.default.findAll({ attributes: ['email'] });
+        const departments = yield Department_1.default.findAll({ attributes: ['name'], where: { 'name': { [sequelize_1.Op.ne]: 'All' } } });
+        let assignees = [];
+        users.map(user => assignees.push(user.email));
+        departments.map(department => assignees.push(department.name));
+        return res.status(201).json({
+            success: true,
+            message: `Assignees Fetched Successfully`,
+            data: {
+                assignees
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "auth.controller.js -> getAssignees"
+            },
+        });
+    }
+});
+exports.getAssignees = getAssignees;

@@ -3,6 +3,11 @@ import User from "../models/User";
 import * as mysql from "mysql2";
 import Department from "../models/Department";
 import UserDepartment from "../models/UserDepartment";
+import { DepartmentTicket } from "../models/DepartmentTicket";
+import File from "../models/File";
+import Ticket from "../models/Ticket";
+import { TicketChat } from "../models/TicketChat";
+import { UserTicket } from "../models/UserTicket";
 
 const connection = new Sequelize({
   dialect: "mysql",
@@ -12,7 +17,7 @@ const connection = new Sequelize({
   password: 'intra-pass',
   database: 'intra_connect',
   port: 3306,
-  models: [User, Department, UserDepartment]
+  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket]
 });
 
 // connection.sync({ alter: true });  // Use cautiously
