@@ -8,4 +8,6 @@ const router = (0, express_1.Router)();
 router.post('/new', auth_validators_1.validateAuthCode, ticket_validators_1.validateNew, ticket_controller_1.newTicket);
 router.get('/all', auth_validators_1.validateAuthCode, ticket_controller_1.getTickets);
 router.get('/:ticketId', auth_validators_1.validateAuthCode, ticket_validators_1.validateGetTicket, ticket_controller_1.getTicket);
+router.post('/:ticketId/chat', auth_validators_1.validateAuthCode, ticket_validators_1.validateNewChat, ticket_controller_1.newChat);
+router.get('/:ticketId/chat', auth_validators_1.validateAuthCode, ticket_controller_1.getChats);
 exports.default = router;

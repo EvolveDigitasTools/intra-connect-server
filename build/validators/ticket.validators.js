@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGetTicket = exports.validateNew = void 0;
+exports.validateNewChat = exports.validateGetTicket = exports.validateNew = void 0;
 const joi_1 = __importDefault(require("joi"));
 const validateNew = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -50,3 +50,24 @@ const validateGetTicket = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.validateGetTicket = validateGetTicket;
+const validateNewChat = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const validateNewChatParams = joi_1.default.object({
+            ticketId: joi_1.default.string().required()
+        });
+        const validateNewChatBody = joi_1.default.object({
+            message: joi_1.default.string()
+        });
+        yield validateNewChatParams.validateAsync(req.params);
+        yield validateNewChatBody.validateAsync(req.body);
+        next();
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+});
+exports.validateNewChat = validateNewChat;

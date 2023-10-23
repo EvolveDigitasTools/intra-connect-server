@@ -8,6 +8,7 @@ import File from "../models/File";
 import { sendMailSetup } from "../utils/mail.service";
 import UserDepartment from "../models/UserDepartment";
 import { Sequelize } from "sequelize-typescript";
+import { TicketChat } from "../models/TicketChat";
 
 interface TicketRequestBody {
     title: string;
@@ -161,24 +162,107 @@ export const getTicket: RequestHandler = async (req, res) => {
                 },
                 {
                     model: User,
+                    attributes: ['email'],
                     as: 'creator'
                 },
                 {
                     model: User,
+                    attributes: ['email'],
                     as: 'assignees'
                 },
                 {
                     model: Department,
+                    attributes: ['name'],
                     as: 'assignedDepartments'
                 }
             ]
         })
-        
+
         return res.status(200).json({
             success: true,
             message: 'Tickets successfully fetched',
             data: {
                 ticket
+            }
+        })
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "ticket.controller.js -> newTicket"
+            },
+        });
+    }
+};
+
+export const newChat: RequestHandler = async (req, res) => {
+    try {
+        const message: string = req.body.message;
+        const ticketId = req.params.ticketId;
+
+        const files = req.files as Express.Multer.File[];
+        const user = await User.findOne({ where: { accessToken: req.header('Authorization')?.split(' ')[1] } })
+
+        const newMsg = await TicketChat.create({
+            ticketId,
+            userId: user?.id,
+            message
+        })
+
+        for (const file of files) {
+            const decodedFile = Buffer.from(file.buffer.toString('base64'), 'base64');
+            await File.create({
+                fileName: file.originalname,
+                fileContent: decodedFile,
+                fileType: 'ticket-chat',
+                ticketChatId: newMsg.id
+            })
+        }
+
+        return res.status(201).json({
+            success: true,
+            message: 'Message successfully added',
+        })
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "ticket.controller.js -> newTicket"
+            },
+        });
+    }
+};
+
+export const getChats: RequestHandler = async (req, res) => {
+    try {
+        const ticketId = req.params.ticketId;
+
+        const chats = await TicketChat.findAll({
+            attributes: ['message', 'createdAt', [Sequelize.col('user.email'), 'email']],
+            where: {
+                ticketId
+            },
+            include: [
+                {
+                    model: File,
+                    attributes: ['id', 'fileName']
+                },
+                {
+                    model: User,
+                    attributes: []
+                }
+            ]
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: 'Chats successfully fetched',
+            data: {
+                chats
             }
         })
 

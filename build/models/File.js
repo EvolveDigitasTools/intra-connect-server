@@ -11,6 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Ticket_1 = __importDefault(require("./Ticket"));
+const TicketChat_1 = require("./TicketChat");
 let File = class File extends sequelize_typescript_1.Model {
 };
 __decorate([
@@ -44,8 +45,17 @@ __decorate([
     })
 ], File.prototype, "ticketId", void 0);
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => TicketChat_1.TicketChat),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER
+    })
+], File.prototype, "ticketChatId", void 0);
+__decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => Ticket_1.default)
 ], File.prototype, "ticket", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => TicketChat_1.TicketChat)
+], File.prototype, "ticketChat", void 0);
 File = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: 'files',

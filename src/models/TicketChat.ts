@@ -8,12 +8,15 @@ import {
   PrimaryKey,
   AutoIncrement,
   CreatedAt,
+  HasMany,
 } from 'sequelize-typescript';
 import Ticket from './Ticket';
 import User from './User';
+import File from './File';
 
 @Table({
   tableName: 'ticket_chats',
+  timestamps: true
 })
 export class TicketChat extends Model {
   @AutoIncrement
@@ -41,6 +44,9 @@ export class TicketChat extends Model {
     allowNull: false,
   })
   message!: string;
+
+  @HasMany(() => File)
+  files!: File[]
 
   @CreatedAt
   createdAt?: Date;

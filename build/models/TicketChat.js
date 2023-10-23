@@ -13,6 +13,7 @@ exports.TicketChat = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Ticket_1 = __importDefault(require("./Ticket"));
 const User_1 = __importDefault(require("./User"));
+const File_1 = __importDefault(require("./File"));
 let TicketChat = class TicketChat extends sequelize_typescript_1.Model {
 };
 exports.TicketChat = TicketChat;
@@ -42,6 +43,9 @@ __decorate([
     })
 ], TicketChat.prototype, "message", void 0);
 __decorate([
+    (0, sequelize_typescript_1.HasMany)(() => File_1.default)
+], TicketChat.prototype, "files", void 0);
+__decorate([
     sequelize_typescript_1.CreatedAt
 ], TicketChat.prototype, "createdAt", void 0);
 __decorate([
@@ -53,5 +57,6 @@ __decorate([
 exports.TicketChat = TicketChat = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: 'ticket_chats',
+        timestamps: true
     })
 ], TicketChat);

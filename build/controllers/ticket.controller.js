@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTicket = exports.getTickets = exports.newTicket = void 0;
+exports.getChats = exports.newChat = exports.getTicket = exports.getTickets = exports.newTicket = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const Ticket_1 = __importDefault(require("../models/Ticket"));
 const UserTicket_1 = require("../models/UserTicket");
@@ -22,6 +22,7 @@ const File_1 = __importDefault(require("../models/File"));
 const mail_service_1 = require("../utils/mail.service");
 const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
 const sequelize_typescript_1 = require("sequelize-typescript");
+const TicketChat_1 = require("../models/TicketChat");
 const newTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -157,14 +158,17 @@ const getTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 },
                 {
                     model: User_1.default,
+                    attributes: ['email'],
                     as: 'creator'
                 },
                 {
                     model: User_1.default,
+                    attributes: ['email'],
                     as: 'assignees'
                 },
                 {
                     model: Department_1.default,
+                    attributes: ['name'],
                     as: 'assignedDepartments'
                 }
             ]
@@ -188,6 +192,81 @@ const getTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getTicket = getTicket;
+const newChat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d;
+    try {
+        const message = req.body.message;
+        const ticketId = req.params.ticketId;
+        const files = req.files;
+        const user = yield User_1.default.findOne({ where: { accessToken: (_d = req.header('Authorization')) === null || _d === void 0 ? void 0 : _d.split(' ')[1] } });
+        const newMsg = yield TicketChat_1.TicketChat.create({
+            ticketId,
+            userId: user === null || user === void 0 ? void 0 : user.id,
+            message
+        });
+        for (const file of files) {
+            const decodedFile = Buffer.from(file.buffer.toString('base64'), 'base64');
+            yield File_1.default.create({
+                fileName: file.originalname,
+                fileContent: decodedFile,
+                fileType: 'ticket-chat',
+                ticketChatId: newMsg.id
+            });
+        }
+        return res.status(201).json({
+            success: true,
+            message: 'Message successfully added',
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "ticket.controller.js -> newTicket"
+            },
+        });
+    }
+});
+exports.newChat = newChat;
+const getChats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const ticketId = req.params.ticketId;
+        const chats = yield TicketChat_1.TicketChat.findAll({
+            attributes: ['message', 'createdAt', [sequelize_typescript_1.Sequelize.col('user.email'), 'email']],
+            where: {
+                ticketId
+            },
+            include: [
+                {
+                    model: File_1.default,
+                    attributes: ['id', 'fileName']
+                },
+                {
+                    model: User_1.default,
+                    attributes: []
+                }
+            ]
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Chats successfully fetched',
+            data: {
+                chats
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "ticket.controller.js -> newTicket"
+            },
+        });
+    }
+});
+exports.getChats = getChats;
 const isUser = (assignee) => {
     if (assignee.includes('@'))
         return true;

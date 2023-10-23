@@ -1,5 +1,6 @@
 import { Model, Table, Column, DataType, AutoIncrement, PrimaryKey, AllowNull, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import Ticket from './Ticket';
+import { TicketChat } from './TicketChat';
 
 @Table({
   tableName: 'files',
@@ -35,6 +36,15 @@ export default class File extends Model {
   })
   ticketId!: number;
 
+  @ForeignKey(() => TicketChat)
+  @Column({
+    type: DataType.INTEGER
+  })
+  ticketChatId!: number;
+
   @BelongsTo(() => Ticket)
   ticket!: Ticket
+
+  @BelongsTo(() => TicketChat)
+  ticketChat!: TicketChat
 }

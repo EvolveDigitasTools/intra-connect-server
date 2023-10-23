@@ -39,3 +39,25 @@ export const validateGetTicket: RequestHandler = async (req, res, next) => {
         });
     }
 }
+
+export const validateNewChat: RequestHandler = async (req, res, next) => {
+    try {
+        const validateNewChatParams = Joi.object({
+            ticketId: Joi.string().required()
+        })
+        const validateNewChatBody = Joi.object({
+            message: Joi.string()
+        })
+
+        await validateNewChatParams.validateAsync(req.params);
+        await validateNewChatBody.validateAsync(req.body);
+        next();
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+}

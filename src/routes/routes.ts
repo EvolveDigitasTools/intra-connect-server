@@ -3,6 +3,7 @@ import { Router } from "express";
 import authRouter from "./auth.route"
 import ticketRouter from "./ticket.route"
 import filesRouter from "./file.route"
+import departmentRouter from "./department.route"
 
 const router = Router();
 
@@ -13,4 +14,6 @@ router.get("/", (req, res) => {
 router.use("/auth", authRouter);
 router.use("/ticket", ticketRouter);
 router.use("/files", filesRouter)
+router.use("/department", departmentRouter)
+
 export default router;
