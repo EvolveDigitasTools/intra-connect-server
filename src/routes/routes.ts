@@ -4,11 +4,13 @@ import authRouter from "./auth.route"
 import ticketRouter from "./ticket.route"
 import filesRouter from "./file.route"
 import departmentRouter from "./department.route"
+import User from "../models/User";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-	res.status(200).send("Api is working");
+router.get("/", async (req, res) => {
+	const users = await User.findAll()
+	res.status(200).send("Api is working"+users.map(user => user.email).toString());
 });
 
 router.use("/auth", authRouter);
