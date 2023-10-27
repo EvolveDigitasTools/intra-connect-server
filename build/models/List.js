@@ -10,8 +10,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const UserDepartment_1 = __importDefault(require("./UserDepartment"));
-let Department = class Department extends sequelize_typescript_1.Model {
+const Board_1 = __importDefault(require("./Board"));
+const Card_1 = __importDefault(require("./Card"));
+let List = class List extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
@@ -19,25 +20,35 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
     })
-], Department.prototype, "id", void 0);
+], List.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.AllowNull)(false),
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING,
+        type: sequelize_typescript_1.DataType.STRING
     })
-], Department.prototype, "name", void 0);
+], List.prototype, "title", void 0);
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => Board_1.default),
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING,
+        type: sequelize_typescript_1.DataType.INTEGER
     })
-], Department.prototype, "description", void 0);
+], List.prototype, "boardId", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => UserDepartment_1.default)
-], Department.prototype, "users", void 0);
-Department = __decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => Board_1.default)
+], List.prototype, "board", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => Card_1.default)
+], List.prototype, "cards", void 0);
+__decorate([
+    sequelize_typescript_1.CreatedAt
+], List.prototype, "createdAt", void 0);
+__decorate([
+    sequelize_typescript_1.UpdatedAt
+], List.prototype, "updatedAt", void 0);
+List = __decorate([
     (0, sequelize_typescript_1.Table)({
-        tableName: 'department',
-        timestamps: false
+        tableName: 'lists',
+        timestamps: true
     })
-], Department);
-exports.default = Department;
+], List);
+exports.default = List;

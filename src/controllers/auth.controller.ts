@@ -22,7 +22,6 @@ export const login: RequestHandler = async (req, res) => {
             }
         });
         const userInfo: any = jwt.decode(response.data.id_token)
-        const token = jwt.sign({ email: userInfo?.email }, JWTKEY);
         const user = await User.findOne({ where: { email: userInfo.email } })
         if (!user) {
             return res.status(401).json({
@@ -30,21 +29,25 @@ export const login: RequestHandler = async (req, res) => {
                 message: 'Login Failure. Please ask your admin to register you in the platform'
             })
         }
-        User.update({
-            accessToken: token,
-            zohoAccessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token
-        }, {
-            where: {
-                email: userInfo.email
-            }
-        })
+        let token
+        if(!user.accessToken) {
+            token = jwt.sign({ email: userInfo?.email }, JWTKEY);
+            await User.update({
+                accessToken: token,
+                zohoAccessToken: response.data.access_token,
+                refreshToken: response.data.refresh_token
+            }, {
+                where: {
+                    email: userInfo.email
+                }
+            })
+        }
 
         return res.status(201).json({
             success: true,
             message: `Login success`,
             data: {
-                token,
+                token: user.accessToken ? user.accessToken : token,
                 user: {
                     "gender": userInfo.gender,
                     "last_name": userInfo.last_name,

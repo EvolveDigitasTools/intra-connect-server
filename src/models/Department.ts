@@ -25,5 +25,5 @@ export default class Department extends Model {
   description!: string;
 
   @HasMany(() => UserDepartment)
-  departments!: UserDepartment[];
+  users!: UserDepartment[];
 }

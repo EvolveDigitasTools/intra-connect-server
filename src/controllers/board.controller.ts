@@ -9,82 +9,46 @@ import { sendMailSetup } from "../utils/mail.service";
 import UserDepartment from "../models/UserDepartment";
 import { Sequelize } from "sequelize-typescript";
 import { TicketChat } from "../models/TicketChat";
+import Board from "../models/Board";
 import { isUser } from "../utils/functions";
+import { UserBoard } from "../models/UserBoard";
+import { DepartmentBoard } from "../models/DepartmentBoard";
 
-interface TicketRequestBody {
-    title: string;
-    description: string;
-    assignees: string;
-}
-
-export const newTicket: RequestHandler = async (req, res) => {
+export const newBoard: RequestHandler = async (req, res) => {
     try {
-        const { title, description, assignees } = req.body as TicketRequestBody;
-        const files = req.files as Express.Multer.File[], assigneesArr = JSON.parse(assignees);
+        const { title, members } = req.body;
         const user = await User.findOne({ where: { accessToken: req.header('Authorization')?.split(' ')[1] } })
 
-        const ticket = await Ticket.create({
+        const board = await Board.create({
             title,
-            description,
             createdBy: user?.id,
         })
-        let mailSent
-        for (let i = 0; i < assigneesArr.length; i++) {
-            const assignee = assigneesArr[i];
-            const variables = {
-                ticketId: ticket.id,
-                title
-            }
-            if (isUser(assignee)) {
-                const assigneeUser = await User.findOne({ where: { email: assignee } })
-                const userTicket = await UserTicket.create({
-                    userId: assigneeUser?.id,
-                    ticketId: ticket.id
+
+        for (let i = 0; i < members.length; i++) {
+            const member = members[i];
+            if (isUser(member)) {
+                const memberUser = await User.findOne({ where: { email: member } })
+                const userBoard = await UserBoard.create({
+                    userId: memberUser?.id,
+                    boardId: board.id
                 })
-                mailSent = await sendMailSetup('new-ticket', assignee, variables);
             }
             else {
-                const assigneeDepartment = await Department.findOne({ where: { name: assignee } })
+                const memberDepartment = await Department.findOne({ where: { name: member } })
 
-                const userDepartment = await UserDepartment.findOne({
-                    where: {
-                        departmentId: assigneeDepartment?.id,
-                        isAdmin: true
-                    },
-                    include: {
-                        model: User,
-                        as: 'user'
-                    }
-                });
-
-                const departmentTicket = await DepartmentTicket.create({
-                    departmentId: assigneeDepartment?.id,
-                    ticketId: ticket.id
+                const departmentTicket = await DepartmentBoard.create({
+                    departmentId: memberDepartment?.id,
+                    boardId: board.id
                 })
-                mailSent = await sendMailSetup('new-ticket-dept', userDepartment?.user?.email, variables)
             }
         }
 
-        for (const file of files) {
-            const decodedFile = Buffer.from(file.buffer.toString('base64'), 'base64');
-            await File.create({
-                fileName: file.originalname,
-                fileContent: decodedFile,
-                fileType: 'ticket-main',
-                ticketId: ticket.id
-            })
-        }
-
-        if (mailSent)
-            return res.status(201).json({
-                success: true,
-                message: 'Ticket successfully created',
-            })
-
-        return res.status(401).json({
-            success: false,
-            message: 'Unable to send mail',
-            data: { mailSent }
+        return res.status(201).json({
+            success: true,
+            message: 'Board successfully created',
+            data: {
+                board
+            }
         })
 
     } catch (error: any) {
@@ -92,7 +56,7 @@ export const newTicket: RequestHandler = async (req, res) => {
             success: false,
             message: error.message,
             data: {
-                "source": "ticket.controller.js -> newTicket"
+                "source": "board.controller.js -> newBoard"
             },
         });
     }
@@ -100,6 +64,7 @@ export const newTicket: RequestHandler = async (req, res) => {
 
 export const getTickets: RequestHandler = async (req, res) => {
     try {
+        console.log('called')
         const user = await User.findOne({ where: { accessToken: req.header('Authorization')?.split(' ')[1] } })
 
         const tickets = await Ticket.findAll({
@@ -151,43 +116,23 @@ export const getTickets: RequestHandler = async (req, res) => {
     }
 };
 
-export const getTicket: RequestHandler = async (req, res) => {
+export const getBoard: RequestHandler = async (req, res) => {
     try {
-        const ticketId = req.params.ticketId;
+        const boardId = req.params.boardId;
 
-        const ticket = await Ticket.findOne({
-            attributes: ['id', 'title', 'description', 'status'],
+        const board = await Board.findOne({
+            attributes: ['id', 'title'],
             where: {
-                id: ticketId
+                id: boardId
             },
-            include: [
-                {
-                    model: File,
-                    attributes: ['id', 'fileName']
-                },
-                {
-                    model: User,
-                    attributes: ['email'],
-                    as: 'creator'
-                },
-                {
-                    model: User,
-                    attributes: ['email'],
-                    as: 'assignees'
-                },
-                {
-                    model: Department,
-                    attributes: ['name'],
-                    as: 'assignedDepartments'
-                }
-            ]
+            include: []
         })
 
         return res.status(200).json({
             success: true,
-            message: 'Tickets successfully fetched',
+            message: 'Board successfully fetched',
             data: {
-                ticket
+                board
             }
         })
 
@@ -196,7 +141,7 @@ export const getTicket: RequestHandler = async (req, res) => {
             success: false,
             message: error.message,
             data: {
-                "source": "ticket.controller.js -> newTicket"
+                "source": "board.controller.js -> getBoard"
             },
         });
     }

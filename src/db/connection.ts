@@ -8,6 +8,11 @@ import File from "../models/File";
 import Ticket from "../models/Ticket";
 import { TicketChat } from "../models/TicketChat";
 import { UserTicket } from "../models/UserTicket";
+import Board from "../models/Board";
+import Card from "../models/Card";
+import { DepartmentBoard } from "../models/DepartmentBoard";
+import List from "../models/List";
+import { UserBoard } from "../models/UserBoard";
 
 const connection = new Sequelize({
   dialect: "mysql",
@@ -17,7 +22,7 @@ const connection = new Sequelize({
   password: 'intra-pass',
   database: 'intra_connect',
   port: 3306,
-  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket]
+  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket, Board, Card, DepartmentBoard, List, UserBoard]
 });
 
 // connection.sync({ alter: true });  // Use cautiously

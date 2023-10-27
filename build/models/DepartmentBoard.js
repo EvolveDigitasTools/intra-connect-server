@@ -9,35 +9,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DepartmentBoard = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const UserDepartment_1 = __importDefault(require("./UserDepartment"));
-let Department = class Department extends sequelize_typescript_1.Model {
+const Department_1 = __importDefault(require("./Department"));
+const Board_1 = __importDefault(require("./Board"));
+let DepartmentBoard = class DepartmentBoard extends sequelize_typescript_1.Model {
 };
+exports.DepartmentBoard = DepartmentBoard;
 __decorate([
     sequelize_typescript_1.AutoIncrement,
     sequelize_typescript_1.PrimaryKey,
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
     })
-], Department.prototype, "id", void 0);
+], DepartmentBoard.prototype, "id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.AllowNull)(false),
+    (0, sequelize_typescript_1.ForeignKey)(() => Department_1.default),
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING,
+        type: sequelize_typescript_1.DataType.INTEGER
     })
-], Department.prototype, "name", void 0);
+], DepartmentBoard.prototype, "departmentId", void 0);
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => Board_1.default),
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING,
+        type: sequelize_typescript_1.DataType.INTEGER
     })
-], Department.prototype, "description", void 0);
-__decorate([
-    (0, sequelize_typescript_1.HasMany)(() => UserDepartment_1.default)
-], Department.prototype, "users", void 0);
-Department = __decorate([
+], DepartmentBoard.prototype, "boardId", void 0);
+exports.DepartmentBoard = DepartmentBoard = __decorate([
     (0, sequelize_typescript_1.Table)({
-        tableName: 'department',
-        timestamps: false
+        tableName: 'department_boards',
     })
-], Department);
-exports.default = Department;
+], DepartmentBoard);

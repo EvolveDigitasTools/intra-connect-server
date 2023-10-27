@@ -33,7 +33,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
         });
         const userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
-        const token = jsonwebtoken_1.default.sign({ email: userInfo === null || userInfo === void 0 ? void 0 : userInfo.email }, JWTKEY);
         const user = yield User_1.default.findOne({ where: { email: userInfo.email } });
         if (!user) {
             return res.status(401).json({
@@ -41,20 +40,24 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 message: 'Login Failure. Please ask your admin to register you in the platform'
             });
         }
-        User_1.default.update({
-            accessToken: token,
-            zohoAccessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token
-        }, {
-            where: {
-                email: userInfo.email
-            }
-        });
+        let token;
+        if (!user.accessToken) {
+            token = jsonwebtoken_1.default.sign({ email: userInfo === null || userInfo === void 0 ? void 0 : userInfo.email }, JWTKEY);
+            yield User_1.default.update({
+                accessToken: token,
+                zohoAccessToken: response.data.access_token,
+                refreshToken: response.data.refresh_token
+            }, {
+                where: {
+                    email: userInfo.email
+                }
+            });
+        }
         return res.status(201).json({
             success: true,
             message: `Login success`,
             data: {
-                token,
+                token: user.accessToken ? user.accessToken : token,
                 user: {
                     "gender": userInfo.gender,
                     "last_name": userInfo.last_name,

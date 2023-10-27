@@ -10,8 +10,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const UserDepartment_1 = __importDefault(require("./UserDepartment"));
-let Department = class Department extends sequelize_typescript_1.Model {
+const List_1 = __importDefault(require("./List"));
+let Card = class Card extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
@@ -19,25 +19,37 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
     })
-], Department.prototype, "id", void 0);
-__decorate([
-    (0, sequelize_typescript_1.AllowNull)(false),
-    (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING,
-    })
-], Department.prototype, "name", void 0);
+], Card.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING,
+        allowNull: false,
     })
-], Department.prototype, "description", void 0);
+], Card.prototype, "title", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => UserDepartment_1.default)
-], Department.prototype, "users", void 0);
-Department = __decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+    })
+], Card.prototype, "description", void 0);
+__decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => List_1.default),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER
+    })
+], Card.prototype, "listId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => List_1.default)
+], Card.prototype, "list", void 0);
+__decorate([
+    sequelize_typescript_1.CreatedAt
+], Card.prototype, "createdAt", void 0);
+__decorate([
+    sequelize_typescript_1.UpdatedAt
+], Card.prototype, "updatedAt", void 0);
+Card = __decorate([
     (0, sequelize_typescript_1.Table)({
-        tableName: 'department',
-        timestamps: false
+        tableName: 'cards',
+        timestamps: true
     })
-], Department);
-exports.default = Department;
+], Card);
+exports.default = Card;
