@@ -15,6 +15,7 @@ const User_1 = __importDefault(require("./User"));
 const UserBoard_1 = require("./UserBoard");
 const Department_1 = __importDefault(require("./Department"));
 const DepartmentBoard_1 = require("./DepartmentBoard");
+const Card_1 = __importDefault(require("./Card"));
 let Board = class Board extends sequelize_typescript_1.Model {
 };
 __decorate([
@@ -30,6 +31,12 @@ __decorate([
         type: sequelize_typescript_1.DataType.STRING
     })
 ], Board.prototype, "title", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Default)('[]'),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], Board.prototype, "listOrder", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsToMany)(() => User_1.default, () => UserBoard_1.UserBoard)
 ], Board.prototype, "members", void 0);
@@ -49,6 +56,9 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => List_1.default)
 ], Board.prototype, "lists", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => Card_1.default)
+], Board.prototype, "cards", void 0);
 __decorate([
     sequelize_typescript_1.CreatedAt
 ], Board.prototype, "createdAt", void 0);

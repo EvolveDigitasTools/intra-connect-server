@@ -18,6 +18,8 @@ const ticket_route_1 = __importDefault(require("./ticket.route"));
 const file_route_1 = __importDefault(require("./file.route"));
 const department_route_1 = __importDefault(require("./department.route"));
 const board_route_1 = __importDefault(require("./board.route"));
+const list_route_1 = __importDefault(require("./list.route"));
+const card_route_1 = __importDefault(require("./card.route"));
 const User_1 = __importDefault(require("../models/User"));
 const router = (0, express_1.Router)();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,4 +31,6 @@ router.use("/ticket", ticket_route_1.default);
 router.use("/files", file_route_1.default);
 router.use("/department", department_route_1.default);
 router.use("/board", board_route_1.default);
+router.use("/list", list_route_1.default);
+router.use("/card", card_route_1.default);
 exports.default = router;

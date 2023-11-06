@@ -1,6 +1,5 @@
-import { Model, Table, Column, DataType, ForeignKey, BelongsTo, HasMany, AutoIncrement, PrimaryKey, AllowNull, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import { Model, Table, Column, DataType, ForeignKey, BelongsTo, HasMany, AutoIncrement, PrimaryKey, AllowNull, CreatedAt, UpdatedAt, Default } from 'sequelize-typescript';
 import Board from './Board';
-import Card from './Card';
 
 @Table({
     tableName: 'lists',
@@ -20,6 +19,18 @@ export default class List extends Model {
     })
     title!: string;
 
+    @AllowNull(false)
+    @Column({
+        type: DataType.INTEGER
+    })
+    boardListId!: number
+
+    @Default('[]')
+    @Column({
+        type: DataType.STRING
+    })
+    cardOrder!: string
+
     @ForeignKey(() => Board)
     @Column({
         type: DataType.INTEGER
@@ -28,9 +39,6 @@ export default class List extends Model {
 
     @BelongsTo(() => Board)
     board!: Board;
-
-    @HasMany(() => Card)
-    cards!: Card[];
 
     @CreatedAt
     createdAt?: Date;

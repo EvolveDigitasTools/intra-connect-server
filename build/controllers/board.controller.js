@@ -12,18 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getChats = exports.newChat = exports.getBoard = exports.getTickets = exports.newBoard = void 0;
+exports.getBoard = exports.getBoards = exports.newBoard = void 0;
 const User_1 = __importDefault(require("../models/User"));
-const Ticket_1 = __importDefault(require("../models/Ticket"));
 const Department_1 = __importDefault(require("../models/Department"));
-const File_1 = __importDefault(require("../models/File"));
 const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
 const sequelize_typescript_1 = require("sequelize-typescript");
-const TicketChat_1 = require("../models/TicketChat");
 const Board_1 = __importDefault(require("../models/Board"));
 const functions_1 = require("../utils/functions");
 const UserBoard_1 = require("../models/UserBoard");
 const DepartmentBoard_1 = require("../models/DepartmentBoard");
+const List_1 = __importDefault(require("../models/List"));
+const Card_1 = __importDefault(require("../models/Card"));
 const newBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -69,27 +68,26 @@ const newBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.newBoard = newBoard;
-const getTickets = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getBoards = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     try {
-        console.log('called');
         const user = yield User_1.default.findOne({ where: { accessToken: (_b = req.header('Authorization')) === null || _b === void 0 ? void 0 : _b.split(' ')[1] } });
-        const tickets = yield Ticket_1.default.findAll({
-            attributes: ['id', 'title', 'description', 'status'],
+        const boards = yield Board_1.default.findAll({
+            attributes: ['id', 'title'],
             include: [
                 {
                     model: User_1.default,
-                    attributes: ['email'],
+                    attributes: [],
                     as: 'creator'
                 },
                 {
                     model: User_1.default,
-                    attributes: ['email'],
-                    as: 'assignees'
+                    attributes: [],
+                    as: 'members'
                 },
                 {
                     model: Department_1.default,
-                    as: 'assignedDepartments',
+                    as: 'departments',
                     include: [
                         {
                             model: UserDepartment_1.default
@@ -97,13 +95,13 @@ const getTickets = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                     ]
                 }
             ],
-            where: sequelize_typescript_1.Sequelize.or({ createdBy: user === null || user === void 0 ? void 0 : user.id }, { '$assignees.id$': user === null || user === void 0 ? void 0 : user.id }, { '$assignedDepartments.users.userId$': user === null || user === void 0 ? void 0 : user.id })
+            where: sequelize_typescript_1.Sequelize.or({ createdBy: user === null || user === void 0 ? void 0 : user.id }, { '$members.id$': user === null || user === void 0 ? void 0 : user.id }, { '$departments.users.userId$': user === null || user === void 0 ? void 0 : user.id })
         });
         return res.status(200).json({
             success: true,
-            message: 'Tickets successfully fetched',
+            message: 'Boards successfully fetched',
             data: {
-                tickets
+                boards
             }
         });
     }
@@ -112,21 +110,30 @@ const getTickets = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             success: false,
             message: error.message,
             data: {
-                "source": "ticket.controller.js -> newTicket"
+                "source": "board.controller.js -> newBoard"
             },
         });
     }
 });
-exports.getTickets = getTickets;
+exports.getBoards = getBoards;
 const getBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const boardId = req.params.boardId;
         const board = yield Board_1.default.findOne({
-            attributes: ['id', 'title'],
+            attributes: ['id', 'title', 'listOrder'],
             where: {
                 id: boardId
             },
-            include: []
+            include: [
+                {
+                    model: List_1.default,
+                    attributes: ['id', 'boardListId', 'cardOrder', 'title']
+                },
+                {
+                    model: Card_1.default,
+                    attributes: ['id', 'boardCardId', 'title']
+                }
+            ]
         });
         return res.status(200).json({
             success: true,
@@ -147,78 +154,3 @@ const getBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getBoard = getBoard;
-const newChat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    try {
-        const message = req.body.message;
-        const ticketId = req.params.ticketId;
-        const files = req.files;
-        const user = yield User_1.default.findOne({ where: { accessToken: (_c = req.header('Authorization')) === null || _c === void 0 ? void 0 : _c.split(' ')[1] } });
-        const newMsg = yield TicketChat_1.TicketChat.create({
-            ticketId,
-            userId: user === null || user === void 0 ? void 0 : user.id,
-            message
-        });
-        for (const file of files) {
-            const decodedFile = Buffer.from(file.buffer.toString('base64'), 'base64');
-            yield File_1.default.create({
-                fileName: file.originalname,
-                fileContent: decodedFile,
-                fileType: 'ticket-chat',
-                ticketChatId: newMsg.id
-            });
-        }
-        return res.status(201).json({
-            success: true,
-            message: 'Message successfully added',
-        });
-    }
-    catch (error) {
-        return res.status(504).json({
-            success: false,
-            message: error.message,
-            data: {
-                "source": "ticket.controller.js -> newTicket"
-            },
-        });
-    }
-});
-exports.newChat = newChat;
-const getChats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const ticketId = req.params.ticketId;
-        const chats = yield TicketChat_1.TicketChat.findAll({
-            attributes: ['message', 'createdAt', [sequelize_typescript_1.Sequelize.col('user.email'), 'email']],
-            where: {
-                ticketId
-            },
-            include: [
-                {
-                    model: File_1.default,
-                    attributes: ['id', 'fileName']
-                },
-                {
-                    model: User_1.default,
-                    attributes: []
-                }
-            ]
-        });
-        return res.status(200).json({
-            success: true,
-            message: 'Chats successfully fetched',
-            data: {
-                chats
-            }
-        });
-    }
-    catch (error) {
-        return res.status(504).json({
-            success: false,
-            message: error.message,
-            data: {
-                "source": "ticket.controller.js -> newTicket"
-            },
-        });
-    }
-});
-exports.getChats = getChats;

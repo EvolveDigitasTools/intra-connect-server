@@ -11,7 +11,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Board_1 = __importDefault(require("./Board"));
-const Card_1 = __importDefault(require("./Card"));
 let List = class List extends sequelize_typescript_1.Model {
 };
 __decorate([
@@ -28,6 +27,18 @@ __decorate([
     })
 ], List.prototype, "title", void 0);
 __decorate([
+    (0, sequelize_typescript_1.AllowNull)(false),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER
+    })
+], List.prototype, "boardListId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Default)('[]'),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], List.prototype, "cardOrder", void 0);
+__decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => Board_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
@@ -36,9 +47,6 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => Board_1.default)
 ], List.prototype, "board", void 0);
-__decorate([
-    (0, sequelize_typescript_1.HasMany)(() => Card_1.default)
-], List.prototype, "cards", void 0);
 __decorate([
     sequelize_typescript_1.CreatedAt
 ], List.prototype, "createdAt", void 0);

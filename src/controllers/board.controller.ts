@@ -1,18 +1,14 @@
 import { RequestHandler } from "express";
 import User from "../models/User";
-import Ticket from "../models/Ticket";
-import { UserTicket } from "../models/UserTicket";
-import { DepartmentTicket } from "../models/DepartmentTicket";
 import Department from "../models/Department";
-import File from "../models/File";
-import { sendMailSetup } from "../utils/mail.service";
 import UserDepartment from "../models/UserDepartment";
 import { Sequelize } from "sequelize-typescript";
-import { TicketChat } from "../models/TicketChat";
 import Board from "../models/Board";
 import { isUser } from "../utils/functions";
 import { UserBoard } from "../models/UserBoard";
 import { DepartmentBoard } from "../models/DepartmentBoard";
+import List from "../models/List";
+import Card from "../models/Card";
 
 export const newBoard: RequestHandler = async (req, res) => {
     try {
@@ -62,27 +58,26 @@ export const newBoard: RequestHandler = async (req, res) => {
     }
 };
 
-export const getTickets: RequestHandler = async (req, res) => {
+export const getBoards: RequestHandler = async (req, res) => {
     try {
-        console.log('called')
         const user = await User.findOne({ where: { accessToken: req.header('Authorization')?.split(' ')[1] } })
 
-        const tickets = await Ticket.findAll({
-            attributes: ['id', 'title', 'description', 'status'],
+        const boards = await Board.findAll({
+            attributes: ['id', 'title'],
             include: [
                 {
                     model: User,
-                    attributes: ['email'],
+                    attributes: [],
                     as: 'creator'
                 },
                 {
                     model: User,
-                    attributes: ['email'],
-                    as: 'assignees'
+                    attributes: [],
+                    as: 'members'
                 },
                 {
                     model: Department,
-                    as: 'assignedDepartments',
+                    as: 'departments',
                     include: [
                         {
                             model: UserDepartment
@@ -92,16 +87,16 @@ export const getTickets: RequestHandler = async (req, res) => {
             ],
             where: Sequelize.or(
                 { createdBy: user?.id },
-                { '$assignees.id$': user?.id },
-                { '$assignedDepartments.users.userId$': user?.id }
+                { '$members.id$': user?.id },
+                { '$departments.users.userId$': user?.id }
             )
         });
 
         return res.status(200).json({
             success: true,
-            message: 'Tickets successfully fetched',
+            message: 'Boards successfully fetched',
             data: {
-                tickets
+                boards
             }
         })
 
@@ -110,7 +105,7 @@ export const getTickets: RequestHandler = async (req, res) => {
             success: false,
             message: error.message,
             data: {
-                "source": "ticket.controller.js -> newTicket"
+                "source": "board.controller.js -> newBoard"
             },
         });
     }
@@ -121,11 +116,20 @@ export const getBoard: RequestHandler = async (req, res) => {
         const boardId = req.params.boardId;
 
         const board = await Board.findOne({
-            attributes: ['id', 'title'],
+            attributes: ['id', 'title', 'listOrder'],
             where: {
                 id: boardId
             },
-            include: []
+            include: [
+                {
+                    model: List,
+                    attributes: ['id', 'boardListId', 'cardOrder', 'title']
+                },
+                {
+                    model: Card,
+                    attributes: ['id', 'boardCardId', 'title']
+                }
+            ]
         })
 
         return res.status(200).json({
@@ -142,86 +146,6 @@ export const getBoard: RequestHandler = async (req, res) => {
             message: error.message,
             data: {
                 "source": "board.controller.js -> getBoard"
-            },
-        });
-    }
-};
-
-export const newChat: RequestHandler = async (req, res) => {
-    try {
-        const message: string = req.body.message;
-        const ticketId = req.params.ticketId;
-
-        const files = req.files as Express.Multer.File[];
-        const user = await User.findOne({ where: { accessToken: req.header('Authorization')?.split(' ')[1] } })
-
-        const newMsg = await TicketChat.create({
-            ticketId,
-            userId: user?.id,
-            message
-        })
-
-        for (const file of files) {
-            const decodedFile = Buffer.from(file.buffer.toString('base64'), 'base64');
-            await File.create({
-                fileName: file.originalname,
-                fileContent: decodedFile,
-                fileType: 'ticket-chat',
-                ticketChatId: newMsg.id
-            })
-        }
-
-        return res.status(201).json({
-            success: true,
-            message: 'Message successfully added',
-        })
-
-    } catch (error: any) {
-        return res.status(504).json({
-            success: false,
-            message: error.message,
-            data: {
-                "source": "ticket.controller.js -> newTicket"
-            },
-        });
-    }
-};
-
-export const getChats: RequestHandler = async (req, res) => {
-    try {
-        const ticketId = req.params.ticketId;
-
-        const chats = await TicketChat.findAll({
-            attributes: ['message', 'createdAt', [Sequelize.col('user.email'), 'email']],
-            where: {
-                ticketId
-            },
-            include: [
-                {
-                    model: File,
-                    attributes: ['id', 'fileName']
-                },
-                {
-                    model: User,
-                    attributes: []
-                }
-            ]
-        })
-
-        return res.status(200).json({
-            success: true,
-            message: 'Chats successfully fetched',
-            data: {
-                chats
-            }
-        })
-
-    } catch (error: any) {
-        return res.status(504).json({
-            success: false,
-            message: error.message,
-            data: {
-                "source": "ticket.controller.js -> newTicket"
             },
         });
     }

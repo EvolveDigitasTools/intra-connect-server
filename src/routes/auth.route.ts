@@ -5,7 +5,7 @@ import { getAssignees, login, logout, newEmployee } from "../controllers/auth.co
 const router = Router();
 
 router.get('/login/:authCode', validateLogin, login);
-router.post('/new', validateNew, newEmployee);
+router.post('/new',validateAuthCode, validateNew, newEmployee);
 router.post('/logout', validateAuthCode, logout)
 router.get('/assignees', validateAuthCode, getAssignees)
 

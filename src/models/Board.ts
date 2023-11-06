@@ -1,9 +1,10 @@
-import { Model, Table, Column, DataType, HasMany, AutoIncrement, PrimaryKey, AllowNull, BelongsToMany, CreatedAt, ForeignKey, BelongsTo, UpdatedAt } from 'sequelize-typescript';
+import { Model, Table, Column, DataType, HasMany, AutoIncrement, PrimaryKey, AllowNull, BelongsToMany, CreatedAt, ForeignKey, BelongsTo, UpdatedAt, Default } from 'sequelize-typescript';
 import List from './List';
 import User from './User';
 import { UserBoard } from './UserBoard';
 import Department from './Department';
 import { DepartmentBoard } from './DepartmentBoard';
+import Card from './Card';
 
 @Table({
     tableName: 'boards',
@@ -23,6 +24,12 @@ export default class Board extends Model {
     })
     title!: string;
 
+    @Default('[]')
+    @Column({
+        type: DataType.STRING
+    })
+    listOrder!: string
+
     @BelongsToMany(() => User, () => UserBoard)
     members!: User[];
 
@@ -41,6 +48,9 @@ export default class Board extends Model {
 
     @HasMany(() => List)
     lists!: List[];
+
+    @HasMany(() => Card)
+    cards!: Card[];
 
     @CreatedAt
     createdAt?: Date;
