@@ -41,6 +41,8 @@ const Card_1 = __importDefault(require("../models/Card"));
 const DepartmentBoard_1 = require("../models/DepartmentBoard");
 const List_1 = __importDefault(require("../models/List"));
 const UserBoard_1 = require("../models/UserBoard");
+const Workflow_1 = __importDefault(require("../models/Workflow"));
+const Step_1 = __importDefault(require("../models/Step"));
 const connection = new sequelize_typescript_1.Sequelize({
     dialect: "mysql",
     dialectModule: mysql,
@@ -49,7 +51,7 @@ const connection = new sequelize_typescript_1.Sequelize({
     password: 'intra-pass',
     database: 'intra_connect',
     port: 3306,
-    models: [User_1.default, Department_1.default, UserDepartment_1.default, DepartmentTicket_1.DepartmentTicket, File_1.default, Ticket_1.default, TicketChat_1.TicketChat, UserTicket_1.UserTicket, Board_1.default, Card_1.default, DepartmentBoard_1.DepartmentBoard, List_1.default, UserBoard_1.UserBoard]
+    models: [User_1.default, Department_1.default, UserDepartment_1.default, DepartmentTicket_1.DepartmentTicket, File_1.default, Ticket_1.default, TicketChat_1.TicketChat, UserTicket_1.UserTicket, Board_1.default, Card_1.default, DepartmentBoard_1.DepartmentBoard, List_1.default, UserBoard_1.UserBoard, Workflow_1.default, Step_1.default]
 });
 // connection.sync({ alter: true });  // Use cautiously
 exports.default = connection;

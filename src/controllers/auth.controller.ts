@@ -12,16 +12,28 @@ export const login: RequestHandler = async (req, res) => {
     try {
         const { authCode } = req.params;
 
-        const response = await axios.post('https://accounts.zoho.com/oauth/v2/token', null, {
+        let response = await axios.post('https://accounts.zoho.com/oauth/v2/token', null, {
             params: {
                 code: authCode,
                 redirect_uri: process.env.AUTH_REDIRECT_URL,
-                client_id: process.env.AUTH_CLIENT_ID,
-                client_secret: process.env.AUTH_CLIENT_SECRET,
+                client_id: process.env.AUTH_CLIENT_ID_EVOLVE,
+                client_secret: process.env.AUTH_CLIENT_SECRET_EVOLVE,
                 grant_type: 'authorization_code',
             }
         });
-        const userInfo: any = jwt.decode(response.data.id_token)
+        let userInfo: any = jwt.decode(response.data.id_token)
+        if (!userInfo) {
+            response = await axios.post('https://accounts.zoho.in/oauth/v2/token', null, {
+                params: {
+                    code: authCode,
+                    redirect_uri: process.env.AUTH_REDIRECT_URL,
+                    client_id: process.env.AUTH_CLIENT_ID_PLUUGIN,
+                    client_secret: process.env.AUTH_CLIENT_SECRET_PLUUGIN,
+                    grant_type: 'authorization_code',
+                }
+            });
+            userInfo = jwt.decode(response.data.id_token)
+        }
         const user = await User.findOne({ where: { email: userInfo.email } })
         if (!user) {
             return res.status(401).json({
@@ -30,7 +42,7 @@ export const login: RequestHandler = async (req, res) => {
             })
         }
         let token
-        if(!user.accessToken) {
+        if (!user.accessToken) {
             token = jwt.sign({ email: userInfo?.email }, JWTKEY);
             await User.update({
                 accessToken: token,
@@ -72,8 +84,14 @@ export const login: RequestHandler = async (req, res) => {
 
 export const logout: RequestHandler = async (req, res) => {
     try {
-        const user = await User.findOne({ where: { accessToken: req.header('Authorization') } })
-        User.update({
+        let authHeader = req.header('Authorization'), accessToken
+        if (authHeader) {
+            accessToken = authHeader.split(' ')[1];
+        } else {
+            accessToken = 'none'
+        }
+        const user = await User.findOne({ where: { accessToken } })
+        await User.update({
             accessToken: null,
             zohoAccessToken: null,
             refreshToken: null

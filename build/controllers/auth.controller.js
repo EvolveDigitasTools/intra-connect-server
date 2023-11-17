@@ -23,16 +23,28 @@ const JWTKEY = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { authCode } = req.params;
-        const response = yield axios_1.default.post('https://accounts.zoho.com/oauth/v2/token', null, {
+        let response = yield axios_1.default.post('https://accounts.zoho.com/oauth/v2/token', null, {
             params: {
                 code: authCode,
                 redirect_uri: process.env.AUTH_REDIRECT_URL,
-                client_id: process.env.AUTH_CLIENT_ID,
-                client_secret: process.env.AUTH_CLIENT_SECRET,
+                client_id: process.env.AUTH_CLIENT_ID_EVOLVE,
+                client_secret: process.env.AUTH_CLIENT_SECRET_EVOLVE,
                 grant_type: 'authorization_code',
             }
         });
-        const userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
+        let userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
+        if (!userInfo) {
+            response = yield axios_1.default.post('https://accounts.zoho.in/oauth/v2/token', null, {
+                params: {
+                    code: authCode,
+                    redirect_uri: process.env.AUTH_REDIRECT_URL,
+                    client_id: process.env.AUTH_CLIENT_ID_PLUUGIN,
+                    client_secret: process.env.AUTH_CLIENT_SECRET_PLUUGIN,
+                    grant_type: 'authorization_code',
+                }
+            });
+            userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
+        }
         const user = yield User_1.default.findOne({ where: { email: userInfo.email } });
         if (!user) {
             return res.status(401).json({
@@ -82,8 +94,15 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.login = login;
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield User_1.default.findOne({ where: { accessToken: req.header('Authorization') } });
-        User_1.default.update({
+        let authHeader = req.header('Authorization'), accessToken;
+        if (authHeader) {
+            accessToken = authHeader.split(' ')[1];
+        }
+        else {
+            accessToken = 'none';
+        }
+        const user = yield User_1.default.findOne({ where: { accessToken } });
+        yield User_1.default.update({
             accessToken: null,
             zohoAccessToken: null,
             refreshToken: null

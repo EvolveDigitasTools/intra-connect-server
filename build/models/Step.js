@@ -10,9 +10,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const UserDepartment_1 = __importDefault(require("./UserDepartment"));
 const Workflow_1 = __importDefault(require("./Workflow"));
-let Department = class Department extends sequelize_typescript_1.Model {
+let Step = class Step extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
@@ -20,28 +19,31 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
     })
-], Department.prototype, "id", void 0);
-__decorate([
-    (0, sequelize_typescript_1.AllowNull)(false),
-    (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING,
-    })
-], Department.prototype, "name", void 0);
+], Step.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING,
+        type: sequelize_typescript_1.DataType.STRING
     })
-], Department.prototype, "description", void 0);
+], Step.prototype, "name", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => Workflow_1.default)
-], Department.prototype, "workflows", void 0);
+    (0, sequelize_typescript_1.Default)('process'),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], Step.prototype, "type", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => UserDepartment_1.default)
-], Department.prototype, "users", void 0);
-Department = __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => Workflow_1.default),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER
+    })
+], Step.prototype, "workflowId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => Workflow_1.default)
+], Step.prototype, "workflow", void 0);
+Step = __decorate([
     (0, sequelize_typescript_1.Table)({
-        tableName: 'department',
-        timestamps: false
+        tableName: 'step',
+        timestamps: true
     })
-], Department);
-exports.default = Department;
+], Step);
+exports.default = Step;
