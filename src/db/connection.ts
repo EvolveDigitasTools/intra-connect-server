@@ -13,6 +13,8 @@ import Card from "../models/Card";
 import { DepartmentBoard } from "../models/DepartmentBoard";
 import List from "../models/List";
 import { UserBoard } from "../models/UserBoard";
+import Workflow from "../models/Workflow";
+import Step from "../models/Step";
 
 const connection = new Sequelize({
   dialect: "mysql",
@@ -22,7 +24,7 @@ const connection = new Sequelize({
   password: 'intra-pass',
   database: 'intra_connect',
   port: 3306,
-  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket, Board, Card, DepartmentBoard, List, UserBoard]
+  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket, Board, Card, DepartmentBoard, List, UserBoard, Workflow, Step]
 });
 
 // connection.sync({ alter: true });  // Use cautiously

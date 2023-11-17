@@ -1,5 +1,6 @@
 import { Model, Table, Column, DataType, AutoIncrement, PrimaryKey, AllowNull, HasMany } from 'sequelize-typescript';
 import UserDepartment from './UserDepartment';
+import Workflow from './Workflow';
 
 @Table({
   tableName: 'department',
@@ -23,6 +24,9 @@ export default class Department extends Model {
     type: DataType.STRING,
   })
   description!: string;
+
+  @HasMany(() => Workflow)
+  workflows!: Workflow[]
 
   @HasMany(() => UserDepartment)
   users!: UserDepartment[];
