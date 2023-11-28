@@ -26,11 +26,21 @@ __decorate([
     })
 ], Step.prototype, "name", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Default)('process'),
+    (0, sequelize_typescript_1.Default)('task'),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING
     })
 ], Step.prototype, "type", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], Step.prototype, "description", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], Step.prototype, "assigneesDesignation", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => Workflow_1.default),
     (0, sequelize_typescript_1.Column)({

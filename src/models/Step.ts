@@ -18,11 +18,21 @@ export default class Step extends Model {
     })
     name!: string;
 
-    @Default('process')
+    @Default('task')
     @Column({
         type: DataType.STRING
     })
     type!: string
+
+    @Column({
+        type: DataType.STRING
+    })
+    description!: string
+
+    @Column({
+        type: DataType.STRING
+    })
+    assigneesDesignation!: string
 
     @ForeignKey(() => Workflow)
     @Column({

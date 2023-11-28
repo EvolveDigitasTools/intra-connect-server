@@ -12,44 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGetWorkflow = exports.validateNewWorkflow = void 0;
+exports.validateWorkflowId = exports.validateNewTask = void 0;
 const joi_1 = __importDefault(require("joi"));
-const Department_1 = __importDefault(require("../models/Department"));
 const Workflow_1 = __importDefault(require("../models/Workflow"));
-const validateNewWorkflow = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const validateNewTask = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newWorkflow = joi_1.default.object({
+        const validateNew = joi_1.default.object({
             name: joi_1.default.string().required(),
-            description: joi_1.default.string(),
-            department: joi_1.default.string().required()
+            type: joi_1.default.string(),
+            description: joi_1.default.string().required(),
+            assigneesDesignation: joi_1.default.string().required()
         });
-        yield newWorkflow.validateAsync(req.body);
-        const department = req.body.department;
-        const isDepartmentExist = yield Department_1.default.findOne({ where: { name: department } });
-        if (!isDepartmentExist)
-            return res.status(400).json({
-                success: false,
-                message: "Department with the given name doesn't exist"
-            });
-        next();
-    }
-    catch (error) {
-        return res.status(504).json({
-            success: false,
-            message: error.message,
-            data: [],
-        });
-    }
-});
-exports.validateNewWorkflow = validateNewWorkflow;
-const validateGetWorkflow = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const workflowId = req.params.id;
+        yield validateNew.validateAsync(req.body);
+        const workflowId = req.params.workflowId;
         const workflow = yield Workflow_1.default.findOne({ where: { id: workflowId } });
         if (!workflow)
             return res.status(400).json({
                 success: false,
-                message: "Workflow with this id don't exist"
+                message: 'Workflow not found with the given id'
             });
         next();
     }
@@ -61,4 +41,24 @@ const validateGetWorkflow = (req, res, next) => __awaiter(void 0, void 0, void 0
         });
     }
 });
-exports.validateGetWorkflow = validateGetWorkflow;
+exports.validateNewTask = validateNewTask;
+const validateWorkflowId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const workflowId = req.params.workflowId;
+        const workflow = yield Workflow_1.default.findOne({ where: { id: workflowId } });
+        if (!workflow)
+            return res.status(400).json({
+                success: false,
+                message: 'Workflow not found with the given id'
+            });
+        next();
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+});
+exports.validateWorkflowId = validateWorkflowId;

@@ -6,4 +6,6 @@ const workflow_validators_1 = require("../validators/workflow.validators");
 const workflow_controller_1 = require("../controllers/workflow.controller");
 const router = (0, express_1.Router)();
 router.post('/new', auth_validators_1.validateAuthCode, workflow_validators_1.validateNewWorkflow, workflow_controller_1.newWorkflow);
+router.get('/all', auth_validators_1.validateAuthCode, workflow_controller_1.getAllWorkflow);
+router.get('/:id', auth_validators_1.validateAuthCode, workflow_validators_1.validateGetWorkflow, workflow_controller_1.getWorkflow);
 exports.default = router;

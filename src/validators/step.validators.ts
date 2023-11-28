@@ -1,23 +1,23 @@
 import { RequestHandler } from "express";
 import Joi from "joi";
-import Department from "../models/Department";
 import Workflow from "../models/Workflow";
 
-export const validateNewWorkflow: RequestHandler = async (req, res, next) => {
+export const validateNewTask: RequestHandler = async (req, res, next) => {
     try {
-        const newWorkflow = Joi.object({
+        const validateNew = Joi.object({
             name: Joi.string().required(),
-            description: Joi.string(),
-            department: Joi.string().required()
+            type: Joi.string(),
+            description: Joi.string().required(),
+            assigneesDesignation: Joi.string().required()
         })
-        await newWorkflow.validateAsync(req.body);
 
-        const department = req.body.department
-        const isDepartmentExist = await Department.findOne({ where: { name: department } })
-        if (!isDepartmentExist)
+        await validateNew.validateAsync(req.body);
+        const workflowId = req.params.workflowId
+        const workflow = await Workflow.findOne({ where: { id: workflowId } })
+        if (!workflow)
             return res.status(400).json({
                 success: false,
-                message: "Department with the given name doesn't exist"
+                message: 'Workflow not found with the given id'
             })
         next();
 
@@ -30,16 +30,17 @@ export const validateNewWorkflow: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const validateGetWorkflow: RequestHandler = async (req, res, next) => {
+export const validateWorkflowId: RequestHandler = async (req, res, next) => {
     try {
-        const workflowId = req.params.id;
+        const workflowId = req.params.workflowId
         const workflow = await Workflow.findOne({ where: { id: workflowId } })
         if (!workflow)
             return res.status(400).json({
                 success: false,
-                message: "Workflow with this id don't exist"
+                message: 'Workflow not found with the given id'
             })
         next();
+
     } catch (error: any) {
         return res.status(504).json({
             success: false,

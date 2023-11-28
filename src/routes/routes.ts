@@ -8,8 +8,7 @@ import boardRouter from "./board.route"
 import listRouter from "./list.route"
 import cardRouter from "./card.route"
 import workflowRouter from "./workflow.route"
-
-import User from "../models/User";
+import stepRouter from "./step.route"
 
 const router = Router();
 
@@ -25,5 +24,6 @@ router.use("/board", boardRouter)
 router.use("/list", listRouter)
 router.use("/card", cardRouter)
 router.use("/workflow", workflowRouter)
+router.use("/step", stepRouter)
 
 export default router;

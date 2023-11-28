@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newWorkflow = void 0;
+exports.getWorkflow = exports.getAllWorkflow = exports.newWorkflow = void 0;
 const Department_1 = __importDefault(require("../models/Department"));
 const Workflow_1 = __importDefault(require("../models/Workflow"));
+const Step_1 = __importDefault(require("../models/Step"));
 const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, description, department } = req.body;
@@ -43,88 +44,58 @@ const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.newWorkflow = newWorkflow;
-// export const getBoards: RequestHandler = async (req, res) => {
-//     try {
-//         const user = await User.findOne({ where: { accessToken: req.header('Authorization')?.split(' ')[1] } })
-//         const boards = await Board.findAll({
-//             attributes: ['id', 'title'],
-//             include: [
-//                 {
-//                     model: User,
-//                     attributes: [],
-//                     as: 'creator'
-//                 },
-//                 {
-//                     model: User,
-//                     attributes: [],
-//                     as: 'members'
-//                 },
-//                 {
-//                     model: Department,
-//                     as: 'departments',
-//                     include: [
-//                         {
-//                             model: UserDepartment
-//                         }
-//                     ]
-//                 }
-//             ],
-//             where: Sequelize.or(
-//                 { createdBy: user?.id },
-//                 { '$members.id$': user?.id },
-//                 { '$departments.users.userId$': user?.id }
-//             )
-//         });
-//         return res.status(200).json({
-//             success: true,
-//             message: 'Boards successfully fetched',
-//             data: {
-//                 boards
-//             }
-//         })
-//     } catch (error: any) {
-//         return res.status(504).json({
-//             success: false,
-//             message: error.message,
-//             data: {
-//                 "source": "board.controller.js -> newBoard"
-//             },
-//         });
-//     }
-// };
-// export const getBoard: RequestHandler = async (req, res) => {
-//     try {
-//         const boardId = req.params.boardId;
-//         const board = await Board.findOne({
-//             attributes: ['id', 'title', 'listOrder'],
-//             where: {
-//                 id: boardId
-//             },
-//             include: [
-//                 {
-//                     model: List,
-//                     attributes: ['id', 'boardListId', 'cardOrder', 'title']
-//                 },
-//                 {
-//                     model: Card,
-//                     attributes: ['id', 'boardCardId', 'title']
-//                 }
-//             ]
-//         })
-//         return res.status(200).json({
-//             success: true,
-//             message: 'Board successfully fetched',
-//             data: {
-//                 board
-//             }
-//         })
-//     } catch (error: any) {
-//         return res.status(504).json({
-//             success: false,
-//             message: error.message,
-//             data: {
-//                 "source": "board.controller.js -> getBoard"
-//             },
-//         });
-//     }
+const getAllWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const workflows = yield Workflow_1.default.findAll({
+            include: [{
+                    model: Step_1.default,
+                    as: 'steps'
+                }]
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Workflows successfully fetched',
+            data: {
+                workflows
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "workflow.controller.js -> getAllWorkflows"
+            },
+        });
+    }
+});
+exports.getAllWorkflow = getAllWorkflow;
+const getWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const workflowId = req.params.id;
+        const workflow = yield Workflow_1.default.findOne({
+            where: {
+                id: workflowId
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Workflow successfully fetched',
+            data: {
+                workflow
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "workflow.controller.js -> getWorkflow"
+            },
+        });
+    }
+});
+exports.getWorkflow = getWorkflow;
 // };
