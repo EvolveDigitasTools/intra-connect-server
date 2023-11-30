@@ -33,8 +33,6 @@ export const newWorkflow: RequestHandler = async (req, res) => {
             position_x: 400
         })
 
-        await workflow.update({ startStepId: workflowStartStep.id });
-
         return res.status(201).json({
             success: true,
             message: 'Workflow successfully created',

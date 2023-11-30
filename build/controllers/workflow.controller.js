@@ -40,7 +40,6 @@ const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             stepId: endStep === null || endStep === void 0 ? void 0 : endStep.id,
             position_x: 400
         });
-        yield workflow.update({ startStepId: workflowStartStep.id });
         return res.status(201).json({
             success: true,
             message: 'Workflow successfully created',
