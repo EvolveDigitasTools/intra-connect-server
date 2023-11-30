@@ -5,7 +5,7 @@ import Board from './Board';
 @Table({
   tableName: 'department_boards',
 })
-export class DepartmentBoard extends Model {
+export default class DepartmentBoard extends Model {
   @AutoIncrement
   @PrimaryKey
   @Column({

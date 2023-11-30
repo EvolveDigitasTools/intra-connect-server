@@ -16,8 +16,9 @@ exports.getWorkflow = exports.getAllWorkflow = exports.newWorkflow = void 0;
 const Department_1 = __importDefault(require("../models/Department"));
 const Workflow_1 = __importDefault(require("../models/Workflow"));
 const Step_1 = __importDefault(require("../models/Step"));
-const WorkflowStep_1 = require("../models/WorkflowStep");
+const WorkflowStep_1 = __importDefault(require("../models/WorkflowStep"));
 const sequelize_typescript_1 = require("sequelize-typescript");
+const WorkflowEdge_1 = __importDefault(require("../models/WorkflowEdge"));
 const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, description, department } = req.body;
@@ -29,12 +30,12 @@ const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
         const startStep = yield Step_1.default.findOne({ where: { type: 'start' } });
         const endStep = yield Step_1.default.findOne({ where: { type: 'end' } });
-        const workflowStartStep = yield WorkflowStep_1.WorkflowStep.create({
+        const workflowStartStep = yield WorkflowStep_1.default.create({
             workflowId: workflow.id,
             stepId: startStep === null || startStep === void 0 ? void 0 : startStep.id,
             position_x: -400
         });
-        const workflowEndStep = yield WorkflowStep_1.WorkflowStep.create({
+        const workflowEndStep = yield WorkflowStep_1.default.create({
             workflowId: workflow.id,
             stepId: endStep === null || endStep === void 0 ? void 0 : endStep.id,
             position_x: 400
@@ -83,11 +84,11 @@ const getAllWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.getAllWorkflow = getAllWorkflow;
 const getWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const workflowId = req.params.id;
+        const workflowId = req.params.workflowId;
         const workflow = yield Workflow_1.default.findOne({
             where: { id: workflowId },
             include: [{
-                    model: WorkflowStep_1.WorkflowStep,
+                    model: WorkflowStep_1.default,
                     as: 'steps',
                     attributes: ['id', [sequelize_typescript_1.Sequelize.literal(`JSON_OBJECT('x', position_x, 'y', position_y)`), 'position'], [sequelize_typescript_1.Sequelize.literal(`JSON_OBJECT('name', \`steps\`.\`name\`, 'assignees', assigneesDesignation, 'description', \`steps\`.\`description\`)`), 'data']],
                     include: [{
@@ -95,6 +96,9 @@ const getWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                         }]
                 }, {
                     model: Department_1.default
+                }, {
+                    model: WorkflowEdge_1.default,
+                    attributes: ['id', ['workflowSourceStepId', 'source'], ['workflowTargetStepId', 'target']]
                 }]
         });
         let workflowTransformed;

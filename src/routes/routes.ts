@@ -9,6 +9,7 @@ import listRouter from "./list.route"
 import cardRouter from "./card.route"
 import workflowRouter from "./workflow.route"
 import stepRouter from "./step.route"
+import edgesRouter from "./edges.route"
 
 const router = Router();
 
@@ -25,5 +26,6 @@ router.use("/list", listRouter)
 router.use("/card", cardRouter)
 router.use("/workflow", workflowRouter)
 router.use("/step", stepRouter)
+router.use("/edges", edgesRouter)
 
 export default router;

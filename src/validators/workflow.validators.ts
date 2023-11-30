@@ -30,9 +30,9 @@ export const validateNewWorkflow: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const validateGetWorkflow: RequestHandler = async (req, res, next) => {
+export const validateWorkflowId: RequestHandler = async (req, res, next) => {
     try {
-        const workflowId = req.params.id;
+        const workflowId = req.params.workflowId;
         const workflow = await Workflow.findOne({ where: { id: workflowId } })
         if (!workflow)
             return res.status(400).json({

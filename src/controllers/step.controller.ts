@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import Step from "../models/Step";
-import { WorkflowStep } from "../models/WorkflowStep";
+import WorkflowStep from "../models/WorkflowStep";
 
 export const newWorkflowStep: RequestHandler = async (req, res) => {
     try {

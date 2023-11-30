@@ -5,8 +5,8 @@ import UserDepartment from "../models/UserDepartment";
 import { Sequelize } from "sequelize-typescript";
 import Board from "../models/Board";
 import { isUser } from "../utils/functions";
-import { UserBoard } from "../models/UserBoard";
-import { DepartmentBoard } from "../models/DepartmentBoard";
+import UserBoard from "../models/UserBoard";
+import DepartmentBoard from "../models/DepartmentBoard";
 import List from "../models/List";
 import Card from "../models/Card";
 

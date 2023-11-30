@@ -6,16 +6,17 @@ import UserDepartment from "../models/UserDepartment";
 import { DepartmentTicket } from "../models/DepartmentTicket";
 import File from "../models/File";
 import Ticket from "../models/Ticket";
-import { TicketChat } from "../models/TicketChat";
-import { UserTicket } from "../models/UserTicket";
+import TicketChat from "../models/TicketChat";
+import UserTicket from "../models/UserTicket";
 import Board from "../models/Board";
 import Card from "../models/Card";
-import { DepartmentBoard } from "../models/DepartmentBoard";
+import DepartmentBoard from "../models/DepartmentBoard";
 import List from "../models/List";
-import { UserBoard } from "../models/UserBoard";
+import UserBoard from "../models/UserBoard";
 import Workflow from "../models/Workflow";
 import Step from "../models/Step";
-import { WorkflowStep } from "../models/WorkflowStep";
+import WorkflowStep from "../models/WorkflowStep";
+import WorkflowEdge from "../models/WorkflowEdge";
 
 const connection = new Sequelize({
   dialect: "mysql",
@@ -25,9 +26,9 @@ const connection = new Sequelize({
   password: 'intra-pass',
   database: 'intra_connect',
   port: 3306,
-  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket, Board, Card, DepartmentBoard, List, UserBoard, Workflow, Step, WorkflowStep]
+  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket, Board, Card, DepartmentBoard, List, UserBoard, Workflow, Step, WorkflowStep, WorkflowEdge]
 });
 
-// connection.sync({ alter: true });  // Use cautiously
+connection.sync({ alter: true });  // Use cautiously
 
 export default connection;

@@ -22,6 +22,7 @@ const list_route_1 = __importDefault(require("./list.route"));
 const card_route_1 = __importDefault(require("./card.route"));
 const workflow_route_1 = __importDefault(require("./workflow.route"));
 const step_route_1 = __importDefault(require("./step.route"));
+const edges_route_1 = __importDefault(require("./edges.route"));
 const router = (0, express_1.Router)();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).send("Api is working");
@@ -35,4 +36,5 @@ router.use("/list", list_route_1.default);
 router.use("/card", card_route_1.default);
 router.use("/workflow", workflow_route_1.default);
 router.use("/step", step_route_1.default);
+router.use("/edges", edges_route_1.default);
 exports.default = router;

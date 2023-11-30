@@ -9,13 +9,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DepartmentBoard = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Department_1 = __importDefault(require("./Department"));
 const Board_1 = __importDefault(require("./Board"));
 let DepartmentBoard = class DepartmentBoard extends sequelize_typescript_1.Model {
 };
-exports.DepartmentBoard = DepartmentBoard;
 __decorate([
     sequelize_typescript_1.AutoIncrement,
     sequelize_typescript_1.PrimaryKey,
@@ -35,8 +33,9 @@ __decorate([
         type: sequelize_typescript_1.DataType.INTEGER
     })
 ], DepartmentBoard.prototype, "boardId", void 0);
-exports.DepartmentBoard = DepartmentBoard = __decorate([
+DepartmentBoard = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: 'department_boards',
     })
 ], DepartmentBoard);
+exports.default = DepartmentBoard;

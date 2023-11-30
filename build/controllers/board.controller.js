@@ -19,8 +19,8 @@ const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Board_1 = __importDefault(require("../models/Board"));
 const functions_1 = require("../utils/functions");
-const UserBoard_1 = require("../models/UserBoard");
-const DepartmentBoard_1 = require("../models/DepartmentBoard");
+const UserBoard_1 = __importDefault(require("../models/UserBoard"));
+const DepartmentBoard_1 = __importDefault(require("../models/DepartmentBoard"));
 const List_1 = __importDefault(require("../models/List"));
 const Card_1 = __importDefault(require("../models/Card"));
 const newBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -36,14 +36,14 @@ const newBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const member = members[i];
             if ((0, functions_1.isUser)(member)) {
                 const memberUser = yield User_1.default.findOne({ where: { email: member } });
-                const userBoard = yield UserBoard_1.UserBoard.create({
+                const userBoard = yield UserBoard_1.default.create({
                     userId: memberUser === null || memberUser === void 0 ? void 0 : memberUser.id,
                     boardId: board.id
                 });
             }
             else {
                 const memberDepartment = yield Department_1.default.findOne({ where: { name: member } });
-                const departmentTicket = yield DepartmentBoard_1.DepartmentBoard.create({
+                const departmentTicket = yield DepartmentBoard_1.default.create({
                     departmentId: memberDepartment === null || memberDepartment === void 0 ? void 0 : memberDepartment.id,
                     boardId: board.id
                 });

@@ -14,12 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateWorkflowStep = exports.newWorkflowStep = void 0;
 const Step_1 = __importDefault(require("../models/Step"));
-const WorkflowStep_1 = require("../models/WorkflowStep");
+const WorkflowStep_1 = __importDefault(require("../models/WorkflowStep"));
 const newWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, type, description, assigneesDesignation } = req.body;
         const step = yield Step_1.default.findOne({ where: { type } });
-        const workflowStep = yield WorkflowStep_1.WorkflowStep.create({
+        const workflowStep = yield WorkflowStep_1.default.create({
             workflowId: Number(req.params.workflowId),
             stepId: step === null || step === void 0 ? void 0 : step.id,
             description,
@@ -49,7 +49,7 @@ const updateWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const { position_x, position_y } = req.body;
         const workflowStepId = req.params.workflowStepId;
-        const workflowStep = yield WorkflowStep_1.WorkflowStep.update({
+        const workflowStep = yield WorkflowStep_1.default.update({
             position_x,
             position_y
         }, { where: { id: Number(workflowStepId) } });

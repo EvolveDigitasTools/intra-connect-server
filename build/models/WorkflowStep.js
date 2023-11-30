@@ -9,13 +9,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkflowStep = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Workflow_1 = __importDefault(require("./Workflow"));
 const Step_1 = __importDefault(require("./Step"));
 let WorkflowStep = class WorkflowStep extends sequelize_typescript_1.Model {
 };
-exports.WorkflowStep = WorkflowStep;
 __decorate([
     sequelize_typescript_1.AutoIncrement,
     sequelize_typescript_1.PrimaryKey,
@@ -65,8 +63,9 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => Step_1.default)
 ], WorkflowStep.prototype, "step", void 0);
-exports.WorkflowStep = WorkflowStep = __decorate([
+WorkflowStep = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: 'workflow_step',
     })
 ], WorkflowStep);
+exports.default = WorkflowStep;

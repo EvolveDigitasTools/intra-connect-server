@@ -5,7 +5,7 @@ import Board from './Board';
 @Table({
   tableName: 'user_boards',
 })
-export class UserBoard extends Model {
+export default class UserBoard extends Model {
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER

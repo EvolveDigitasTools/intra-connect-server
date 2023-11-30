@@ -15,14 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getChats = exports.newChat = exports.getTicket = exports.getTickets = exports.newTicket = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const Ticket_1 = __importDefault(require("../models/Ticket"));
-const UserTicket_1 = require("../models/UserTicket");
+const UserTicket_1 = __importDefault(require("../models/UserTicket"));
 const DepartmentTicket_1 = require("../models/DepartmentTicket");
 const Department_1 = __importDefault(require("../models/Department"));
 const File_1 = __importDefault(require("../models/File"));
 const mail_service_1 = require("../utils/mail.service");
 const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
 const sequelize_typescript_1 = require("sequelize-typescript");
-const TicketChat_1 = require("../models/TicketChat");
+const TicketChat_1 = __importDefault(require("../models/TicketChat"));
 const functions_1 = require("../utils/functions");
 const newTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
@@ -44,7 +44,7 @@ const newTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             };
             if ((0, functions_1.isUser)(assignee)) {
                 const assigneeUser = yield User_1.default.findOne({ where: { email: assignee } });
-                const userTicket = yield UserTicket_1.UserTicket.create({
+                const userTicket = yield UserTicket_1.default.create({
                     userId: assigneeUser === null || assigneeUser === void 0 ? void 0 : assigneeUser.id,
                     ticketId: ticket.id
                 });
@@ -204,7 +204,7 @@ const newChat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const ticketId = req.params.ticketId;
         const files = req.files;
         const user = yield User_1.default.findOne({ where: { accessToken: (_d = req.header('Authorization')) === null || _d === void 0 ? void 0 : _d.split(' ')[1] } });
-        const newMsg = yield TicketChat_1.TicketChat.create({
+        const newMsg = yield TicketChat_1.default.create({
             ticketId,
             userId: user === null || user === void 0 ? void 0 : user.id,
             message
@@ -237,7 +237,7 @@ exports.newChat = newChat;
 const getChats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const ticketId = req.params.ticketId;
-        const chats = yield TicketChat_1.TicketChat.findAll({
+        const chats = yield TicketChat_1.default.findAll({
             attributes: ['message', 'createdAt', [sequelize_typescript_1.Sequelize.col('user.email'), 'email']],
             where: {
                 ticketId

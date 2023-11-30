@@ -1,11 +1,8 @@
 import { RequestHandler } from "express";
 import User from "../models/User";
 import Ticket from "../models/Ticket";
-import { UserTicket } from "../models/UserTicket";
-import { DepartmentTicket } from "../models/DepartmentTicket";
 import Department from "../models/Department";
 import File from "../models/File";
-import { sendMailSetup } from "../utils/mail.service";
 import UserDepartment from "../models/UserDepartment";
 import { Sequelize } from "sequelize-typescript";
 

@@ -1,9 +1,9 @@
 import { Model, Table, Column, DataType, HasMany, AutoIncrement, PrimaryKey, AllowNull, BelongsToMany, CreatedAt, ForeignKey, BelongsTo, UpdatedAt, Default } from 'sequelize-typescript';
 import List from './List';
 import User from './User';
-import { UserBoard } from './UserBoard';
+import UserBoard from './UserBoard';
 import Department from './Department';
-import { DepartmentBoard } from './DepartmentBoard';
+import DepartmentBoard from './DepartmentBoard';
 import Card from './Card';
 
 @Table({

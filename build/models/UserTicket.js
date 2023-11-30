@@ -9,13 +9,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserTicket = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const User_1 = __importDefault(require("./User"));
 const Ticket_1 = __importDefault(require("./Ticket"));
 let UserTicket = class UserTicket extends sequelize_typescript_1.Model {
 };
-exports.UserTicket = UserTicket;
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => User_1.default),
     (0, sequelize_typescript_1.Column)({
@@ -28,8 +26,9 @@ __decorate([
         type: sequelize_typescript_1.DataType.INTEGER
     })
 ], UserTicket.prototype, "ticketId", void 0);
-exports.UserTicket = UserTicket = __decorate([
+UserTicket = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: 'user_tickets',
     })
 ], UserTicket);
+exports.default = UserTicket;

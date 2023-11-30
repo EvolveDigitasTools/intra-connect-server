@@ -1,6 +1,6 @@
 import { Model, Table, Column, DataType, AutoIncrement, PrimaryKey, AllowNull, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import Ticket from './Ticket';
-import { TicketChat } from './TicketChat';
+import TicketChat from './TicketChat';
 
 @Table({
   tableName: 'files',

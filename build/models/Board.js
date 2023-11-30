@@ -12,9 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
 const List_1 = __importDefault(require("./List"));
 const User_1 = __importDefault(require("./User"));
-const UserBoard_1 = require("./UserBoard");
+const UserBoard_1 = __importDefault(require("./UserBoard"));
 const Department_1 = __importDefault(require("./Department"));
-const DepartmentBoard_1 = require("./DepartmentBoard");
+const DepartmentBoard_1 = __importDefault(require("./DepartmentBoard"));
 const Card_1 = __importDefault(require("./Card"));
 let Board = class Board extends sequelize_typescript_1.Model {
 };
@@ -38,10 +38,10 @@ __decorate([
     })
 ], Board.prototype, "listOrder", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsToMany)(() => User_1.default, () => UserBoard_1.UserBoard)
+    (0, sequelize_typescript_1.BelongsToMany)(() => User_1.default, () => UserBoard_1.default)
 ], Board.prototype, "members", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsToMany)(() => Department_1.default, () => DepartmentBoard_1.DepartmentBoard)
+    (0, sequelize_typescript_1.BelongsToMany)(() => Department_1.default, () => DepartmentBoard_1.default)
 ], Board.prototype, "departments", void 0);
 __decorate([
     (0, sequelize_typescript_1.AllowNull)(false),

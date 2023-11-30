@@ -18,7 +18,7 @@ import File from './File';
   tableName: 'ticket_chats',
   timestamps: true
 })
-export class TicketChat extends Model {
+export default class TicketChat extends Model {
   @AutoIncrement
   @PrimaryKey
   @Column({

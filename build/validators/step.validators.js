@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateStepUpdate = exports.validateWorkflowStepId = exports.validateNewTask = void 0;
 const joi_1 = __importDefault(require("joi"));
 const Workflow_1 = __importDefault(require("../models/Workflow"));
-const WorkflowStep_1 = require("../models/WorkflowStep");
+const WorkflowStep_1 = __importDefault(require("../models/WorkflowStep"));
 const validateNewTask = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validateNew = joi_1.default.object({
@@ -46,7 +46,7 @@ exports.validateNewTask = validateNewTask;
 const validateWorkflowStepId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const workflowStepId = req.params.workflowStepId;
-        const step = yield WorkflowStep_1.WorkflowStep.findOne({ where: { id: Number(workflowStepId) } });
+        const step = yield WorkflowStep_1.default.findOne({ where: { id: Number(workflowStepId) } });
         if (!step)
             return res.status(400).json({
                 success: false,

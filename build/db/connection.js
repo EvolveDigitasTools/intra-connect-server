@@ -34,16 +34,17 @@ const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
 const DepartmentTicket_1 = require("../models/DepartmentTicket");
 const File_1 = __importDefault(require("../models/File"));
 const Ticket_1 = __importDefault(require("../models/Ticket"));
-const TicketChat_1 = require("../models/TicketChat");
-const UserTicket_1 = require("../models/UserTicket");
+const TicketChat_1 = __importDefault(require("../models/TicketChat"));
+const UserTicket_1 = __importDefault(require("../models/UserTicket"));
 const Board_1 = __importDefault(require("../models/Board"));
 const Card_1 = __importDefault(require("../models/Card"));
-const DepartmentBoard_1 = require("../models/DepartmentBoard");
+const DepartmentBoard_1 = __importDefault(require("../models/DepartmentBoard"));
 const List_1 = __importDefault(require("../models/List"));
-const UserBoard_1 = require("../models/UserBoard");
+const UserBoard_1 = __importDefault(require("../models/UserBoard"));
 const Workflow_1 = __importDefault(require("../models/Workflow"));
 const Step_1 = __importDefault(require("../models/Step"));
-const WorkflowStep_1 = require("../models/WorkflowStep");
+const WorkflowStep_1 = __importDefault(require("../models/WorkflowStep"));
+const WorkflowEdge_1 = __importDefault(require("../models/WorkflowEdge"));
 const connection = new sequelize_typescript_1.Sequelize({
     dialect: "mysql",
     dialectModule: mysql,
@@ -52,7 +53,7 @@ const connection = new sequelize_typescript_1.Sequelize({
     password: 'intra-pass',
     database: 'intra_connect',
     port: 3306,
-    models: [User_1.default, Department_1.default, UserDepartment_1.default, DepartmentTicket_1.DepartmentTicket, File_1.default, Ticket_1.default, TicketChat_1.TicketChat, UserTicket_1.UserTicket, Board_1.default, Card_1.default, DepartmentBoard_1.DepartmentBoard, List_1.default, UserBoard_1.UserBoard, Workflow_1.default, Step_1.default, WorkflowStep_1.WorkflowStep]
+    models: [User_1.default, Department_1.default, UserDepartment_1.default, DepartmentTicket_1.DepartmentTicket, File_1.default, Ticket_1.default, TicketChat_1.default, UserTicket_1.default, Board_1.default, Card_1.default, DepartmentBoard_1.default, List_1.default, UserBoard_1.default, Workflow_1.default, Step_1.default, WorkflowStep_1.default, WorkflowEdge_1.default]
 });
-// connection.sync({ alter: true });  // Use cautiously
+connection.sync({ alter: true }); // Use cautiously
 exports.default = connection;

@@ -5,7 +5,7 @@ import Ticket from './Ticket';
 @Table({
   tableName: 'user_tickets',
 })
-export class UserTicket extends Model {
+export default class UserTicket extends Model {
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER

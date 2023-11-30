@@ -2,8 +2,9 @@ import { RequestHandler } from "express";
 import Department from "../models/Department";
 import Workflow from "../models/Workflow";
 import Step from "../models/Step";
-import { WorkflowStep } from "../models/WorkflowStep";
+import WorkflowStep from "../models/WorkflowStep";
 import { Sequelize } from "sequelize-typescript";
+import WorkflowEdge from "../models/WorkflowEdge";
 
 export const newWorkflow: RequestHandler = async (req, res) => {
     try {
@@ -78,7 +79,7 @@ export const getAllWorkflow: RequestHandler = async (req, res) => {
 
 export const getWorkflow: RequestHandler = async (req, res) => {
     try {
-        const workflowId = req.params.id;
+        const workflowId = req.params.workflowId;
 
         const workflow = await Workflow.findOne({
             where: { id: workflowId },
@@ -91,6 +92,9 @@ export const getWorkflow: RequestHandler = async (req, res) => {
                 }]
             },{
                 model: Department
+            },{
+                model: WorkflowEdge,
+                attributes: ['id', ['workflowSourceStepId', 'source'], ['workflowTargetStepId', 'target']]
             }]
         });
 

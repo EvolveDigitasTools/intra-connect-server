@@ -1,9 +1,9 @@
 import { AllowNull, AutoIncrement, BelongsTo, BelongsToMany, Column, CreatedAt, DataType, Default, ForeignKey, HasMany, HasOne, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 import User from "./User";
 import Department from "./Department";
-import { UserTicket } from "./UserTicket";
+import UserTicket from "./UserTicket";
 import { DepartmentTicket } from "./DepartmentTicket";
-import { TicketChat } from "./TicketChat";
+import TicketChat from "./TicketChat";
 import File from "./File";
 
 @Table({

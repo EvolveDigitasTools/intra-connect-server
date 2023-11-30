@@ -10,52 +10,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const Ticket_1 = __importDefault(require("./Ticket"));
-const User_1 = __importDefault(require("./User"));
-const File_1 = __importDefault(require("./File"));
-let TicketChat = class TicketChat extends sequelize_typescript_1.Model {
+const Workflow_1 = __importDefault(require("./Workflow"));
+const WorkflowStep_1 = __importDefault(require("./WorkflowStep"));
+let WorkflowEdge = class WorkflowEdge extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
     sequelize_typescript_1.PrimaryKey,
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.INTEGER
+        type: sequelize_typescript_1.DataType.INTEGER,
     })
-], TicketChat.prototype, "id", void 0);
+], WorkflowEdge.prototype, "id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Ticket_1.default),
+    (0, sequelize_typescript_1.ForeignKey)(() => Workflow_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
-], TicketChat.prototype, "ticketId", void 0);
+], WorkflowEdge.prototype, "workflowId", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => User_1.default),
+    (0, sequelize_typescript_1.ForeignKey)(() => WorkflowStep_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
-], TicketChat.prototype, "userId", void 0);
+], WorkflowEdge.prototype, "workflowSourceStepId", void 0);
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => WorkflowStep_1.default),
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.TEXT,
-        allowNull: false,
+        type: sequelize_typescript_1.DataType.INTEGER
     })
-], TicketChat.prototype, "message", void 0);
-__decorate([
-    (0, sequelize_typescript_1.HasMany)(() => File_1.default)
-], TicketChat.prototype, "files", void 0);
-__decorate([
-    sequelize_typescript_1.CreatedAt
-], TicketChat.prototype, "createdAt", void 0);
-__decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => Ticket_1.default)
-], TicketChat.prototype, "ticket", void 0);
-__decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => User_1.default)
-], TicketChat.prototype, "user", void 0);
-TicketChat = __decorate([
+], WorkflowEdge.prototype, "workflowTargetStepId", void 0);
+WorkflowEdge = __decorate([
     (0, sequelize_typescript_1.Table)({
-        tableName: 'ticket_chats',
-        timestamps: true
+        tableName: 'workflow_edge',
     })
-], TicketChat);
-exports.default = TicketChat;
+], WorkflowEdge);
+exports.default = WorkflowEdge;

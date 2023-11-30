@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_validators_1 = require("../validators/auth.validators");
+const workflow_validators_1 = require("../validators/workflow.validators");
+const edges_controller_1 = require("../controllers/edges.controller");
+const edge_validators_1 = require("../validators/edge.validators");
+const router = (0, express_1.Router)();
+router.post('/:workflowId/', auth_validators_1.validateAuthCode, workflow_validators_1.validateWorkflowId, edge_validators_1.validateNewEdge, edges_controller_1.newEdge);
+router.delete('/:edgeId/', auth_validators_1.validateAuthCode, edge_validators_1.validateEdgeId, edges_controller_1.deleteEdge);
+exports.default = router;

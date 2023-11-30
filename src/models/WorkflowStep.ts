@@ -5,7 +5,7 @@ import Step from "./Step";
 @Table({
     tableName: 'workflow_step',
 })
-export class WorkflowStep extends Model {
+export default class WorkflowStep extends Model {
     @AutoIncrement
     @PrimaryKey
     @Column({

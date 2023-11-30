@@ -12,24 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateWorkflowId = exports.validateNewWorkflow = void 0;
+exports.validateEdgeId = exports.validateNewEdge = void 0;
 const joi_1 = __importDefault(require("joi"));
-const Department_1 = __importDefault(require("../models/Department"));
-const Workflow_1 = __importDefault(require("../models/Workflow"));
-const validateNewWorkflow = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const WorkflowStep_1 = __importDefault(require("../models/WorkflowStep"));
+const WorkflowEdge_1 = __importDefault(require("../models/WorkflowEdge"));
+const validateNewEdge = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newWorkflow = joi_1.default.object({
-            name: joi_1.default.string().required(),
-            description: joi_1.default.string(),
-            department: joi_1.default.string().required()
+        const validateNew = joi_1.default.object({
+            source: joi_1.default.number().required(),
+            target: joi_1.default.number().required(),
         });
-        yield newWorkflow.validateAsync(req.body);
-        const department = req.body.department;
-        const isDepartmentExist = yield Department_1.default.findOne({ where: { name: department } });
-        if (!isDepartmentExist)
+        const { source, target } = yield validateNew.validateAsync(req.body);
+        const sourceWorkflowStep = yield WorkflowStep_1.default.findOne({ where: { id: source } });
+        const targetWorkflowStep = yield WorkflowStep_1.default.findOne({ where: { id: target } });
+        if (!(sourceWorkflowStep && targetWorkflowStep))
             return res.status(400).json({
                 success: false,
-                message: "Department with the given name doesn't exist"
+                message: "source or target id incorrect"
             });
         next();
     }
@@ -41,15 +40,14 @@ const validateNewWorkflow = (req, res, next) => __awaiter(void 0, void 0, void 0
         });
     }
 });
-exports.validateNewWorkflow = validateNewWorkflow;
-const validateWorkflowId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.validateNewEdge = validateNewEdge;
+const validateEdgeId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const workflowId = req.params.workflowId;
-        const workflow = yield Workflow_1.default.findOne({ where: { id: workflowId } });
-        if (!workflow)
+        const workflowEdge = yield WorkflowEdge_1.default.findOne({ where: { id: Number(req.params.edgeId) } });
+        if (!workflowEdge)
             return res.status(400).json({
                 success: false,
-                message: "Workflow with this id don't exist"
+                message: "workflow edge with this id doesn't exist"
             });
         next();
     }
@@ -61,4 +59,4 @@ const validateWorkflowId = (req, res, next) => __awaiter(void 0, void 0, void 0,
         });
     }
 });
-exports.validateWorkflowId = validateWorkflowId;
+exports.validateEdgeId = validateEdgeId;
