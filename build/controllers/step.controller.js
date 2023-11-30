@@ -12,23 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newStep = void 0;
+exports.updateWorkflowStep = exports.newWorkflowStep = void 0;
 const Step_1 = __importDefault(require("../models/Step"));
-const newStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const WorkflowStep_1 = require("../models/WorkflowStep");
+const newWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, type, description, assigneesDesignation } = req.body;
-        const step = yield Step_1.default.create({
-            name,
-            type,
+        const step = yield Step_1.default.findOne({ where: { type } });
+        const workflowStep = yield WorkflowStep_1.WorkflowStep.create({
+            workflowId: Number(req.params.workflowId),
+            stepId: step === null || step === void 0 ? void 0 : step.id,
             description,
             assigneesDesignation,
-            workflowId: Number(req.params.workflowId)
+            name
         });
         return res.status(201).json({
             success: true,
-            message: 'Step successfully created',
+            message: 'Workflow Step successfully created',
             data: {
-                step
+                workflowStep
             }
         });
     }
@@ -37,9 +39,36 @@ const newStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             success: false,
             message: error.message,
             data: {
-                "source": "step.controller.js -> newStep"
+                "source": "step.controller.js -> newWorkflowStep"
             },
         });
     }
 });
-exports.newStep = newStep;
+exports.newWorkflowStep = newWorkflowStep;
+const updateWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { position_x, position_y } = req.body;
+        const workflowStepId = req.params.workflowStepId;
+        const workflowStep = yield WorkflowStep_1.WorkflowStep.update({
+            position_x,
+            position_y
+        }, { where: { id: Number(workflowStepId) } });
+        return res.status(201).json({
+            success: true,
+            message: 'Workflow Step successfully updated',
+            data: {
+                workflowStep
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "step.controller.js -> updateWorkflowStep"
+            },
+        });
+    }
+});
+exports.updateWorkflowStep = updateWorkflowStep;

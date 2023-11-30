@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateWorkflowId = exports.validateNewTask = void 0;
+exports.validateStepUpdate = exports.validateWorkflowStepId = exports.validateNewTask = void 0;
 const joi_1 = __importDefault(require("joi"));
 const Workflow_1 = __importDefault(require("../models/Workflow"));
+const WorkflowStep_1 = require("../models/WorkflowStep");
 const validateNewTask = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validateNew = joi_1.default.object({
@@ -42,14 +43,14 @@ const validateNewTask = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.validateNewTask = validateNewTask;
-const validateWorkflowId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const validateWorkflowStepId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const workflowId = req.params.workflowId;
-        const workflow = yield Workflow_1.default.findOne({ where: { id: workflowId } });
-        if (!workflow)
+        const workflowStepId = req.params.workflowStepId;
+        const step = yield WorkflowStep_1.WorkflowStep.findOne({ where: { id: Number(workflowStepId) } });
+        if (!step)
             return res.status(400).json({
                 success: false,
-                message: 'Workflow not found with the given id'
+                message: 'Step not found with the given id'
             });
         next();
     }
@@ -61,4 +62,22 @@ const validateWorkflowId = (req, res, next) => __awaiter(void 0, void 0, void 0,
         });
     }
 });
-exports.validateWorkflowId = validateWorkflowId;
+exports.validateWorkflowStepId = validateWorkflowStepId;
+const validateStepUpdate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const validateUpdate = joi_1.default.object({
+            position_x: joi_1.default.number(),
+            position_y: joi_1.default.number()
+        });
+        yield validateUpdate.validateAsync(req.body);
+        next();
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+});
+exports.validateStepUpdate = validateStepUpdate;

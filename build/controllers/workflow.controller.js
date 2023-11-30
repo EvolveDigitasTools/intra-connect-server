@@ -89,10 +89,12 @@ const getWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             include: [{
                     model: WorkflowStep_1.WorkflowStep,
                     as: 'steps',
-                    attributes: ['assigneesDesignation', 'description', 'id', 'name', [sequelize_typescript_1.Sequelize.literal(`JSON_OBJECT('x', position_x, 'y', position_y)`), 'position']],
+                    attributes: ['id', [sequelize_typescript_1.Sequelize.literal(`JSON_OBJECT('x', position_x, 'y', position_y)`), 'position'], [sequelize_typescript_1.Sequelize.literal(`JSON_OBJECT('name', \`steps\`.\`name\`, 'assignees', assigneesDesignation, 'description', \`steps\`.\`description\`)`), 'data']],
                     include: [{
                             model: Step_1.default
                         }]
+                }, {
+                    model: Department_1.default
                 }]
         });
         let workflowTransformed;
@@ -101,7 +103,7 @@ const getWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             workflowTransformed = workflow.get({ plain: true });
             if (workflowTransformed.steps) {
                 workflowTransformed.steps = workflowTransformed.steps.map((step) => {
-                    return Object.assign(Object.assign({}, step), { type: step.step ? step.step.type : null, data: null, id: step.id + '' });
+                    return Object.assign(Object.assign({}, step), { type: step.step ? step.step.type : null, id: step.id + '' });
                 });
             }
         }

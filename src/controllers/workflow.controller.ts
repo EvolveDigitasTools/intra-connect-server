@@ -85,10 +85,12 @@ export const getWorkflow: RequestHandler = async (req, res) => {
             include: [{
                 model: WorkflowStep,
                 as: 'steps',
-                attributes: ['assigneesDesignation', 'description', 'id', 'name', [Sequelize.literal(`JSON_OBJECT('x', position_x, 'y', position_y)`), 'position']],
+                attributes: ['id', [Sequelize.literal(`JSON_OBJECT('x', position_x, 'y', position_y)`), 'position'], [Sequelize.literal(`JSON_OBJECT('name', \`steps\`.\`name\`, 'assignees', assigneesDesignation, 'description', \`steps\`.\`description\`)`), 'data']],
                 include: [{
                     model: Step
                 }]
+            },{
+                model: Department
             }]
         });
 
@@ -103,7 +105,6 @@ export const getWorkflow: RequestHandler = async (req, res) => {
                     return {
                         ...step, // Spread the existing step properties
                         type: step.step ? step.step.type : null, // Add the type property from Step
-                        data: null,
                         id: step.id + ''
                     };
                 });
