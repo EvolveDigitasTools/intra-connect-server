@@ -16,6 +16,8 @@ exports.getWorkflow = exports.getAllWorkflow = exports.newWorkflow = void 0;
 const Department_1 = __importDefault(require("../models/Department"));
 const Workflow_1 = __importDefault(require("../models/Workflow"));
 const Step_1 = __importDefault(require("../models/Step"));
+const WorkflowStep_1 = require("../models/WorkflowStep");
+const sequelize_typescript_1 = require("sequelize-typescript");
 const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, description, department } = req.body;
@@ -25,6 +27,19 @@ const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             description,
             departmentId: selectedDepartment === null || selectedDepartment === void 0 ? void 0 : selectedDepartment.id
         });
+        const startStep = yield Step_1.default.findOne({ where: { type: 'start' } });
+        const endStep = yield Step_1.default.findOne({ where: { type: 'end' } });
+        const workflowStartStep = yield WorkflowStep_1.WorkflowStep.create({
+            workflowId: workflow.id,
+            stepId: startStep === null || startStep === void 0 ? void 0 : startStep.id,
+            position_x: -400
+        });
+        const workflowEndStep = yield WorkflowStep_1.WorkflowStep.create({
+            workflowId: workflow.id,
+            stepId: endStep === null || endStep === void 0 ? void 0 : endStep.id,
+            position_x: 400
+        });
+        yield workflow.update({ startStepId: workflowStartStep.id });
         return res.status(201).json({
             success: true,
             message: 'Workflow successfully created',
@@ -46,12 +61,7 @@ const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.newWorkflow = newWorkflow;
 const getAllWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const workflows = yield Workflow_1.default.findAll({
-            include: [{
-                    model: Step_1.default,
-                    as: 'steps'
-                }]
-        });
+        const workflows = yield Workflow_1.default.findAll();
         return res.status(200).json({
             success: true,
             message: 'Workflows successfully fetched',
@@ -75,15 +85,31 @@ const getWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const workflowId = req.params.id;
         const workflow = yield Workflow_1.default.findOne({
-            where: {
-                id: workflowId
-            }
+            where: { id: workflowId },
+            include: [{
+                    model: WorkflowStep_1.WorkflowStep,
+                    as: 'steps',
+                    attributes: ['assigneesDesignation', 'description', 'id', 'name', [sequelize_typescript_1.Sequelize.literal(`JSON_OBJECT('x', position_x, 'y', position_y)`), 'position']],
+                    include: [{
+                            model: Step_1.default
+                        }]
+                }]
         });
+        let workflowTransformed;
+        if (workflow) {
+            // Convert the entire workflow to a plain object
+            workflowTransformed = workflow.get({ plain: true });
+            if (workflowTransformed.steps) {
+                workflowTransformed.steps = workflowTransformed.steps.map((step) => {
+                    return Object.assign(Object.assign({}, step), { type: step.step ? step.step.type : null, data: null, id: step.id + '' });
+                });
+            }
+        }
         return res.status(200).json({
             success: true,
             message: 'Workflow successfully fetched',
             data: {
-                workflow
+                workflow: workflowTransformed
             }
         });
     }

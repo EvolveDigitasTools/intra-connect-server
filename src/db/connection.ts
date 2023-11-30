@@ -15,6 +15,7 @@ import List from "../models/List";
 import { UserBoard } from "../models/UserBoard";
 import Workflow from "../models/Workflow";
 import Step from "../models/Step";
+import { WorkflowStep } from "../models/WorkflowStep";
 
 const connection = new Sequelize({
   dialect: "mysql",
@@ -24,7 +25,7 @@ const connection = new Sequelize({
   password: 'intra-pass',
   database: 'intra_connect',
   port: 3306,
-  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket, Board, Card, DepartmentBoard, List, UserBoard, Workflow, Step]
+  models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket, Board, Card, DepartmentBoard, List, UserBoard, Workflow, Step, WorkflowStep]
 });
 
 // connection.sync({ alter: true });  // Use cautiously

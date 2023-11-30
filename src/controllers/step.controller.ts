@@ -28,7 +28,7 @@ export const newStep: RequestHandler = async (req, res) => {
             success: false,
             message: error.message,
             data: {
-                "source": "workflow.controller.js -> newWorkflow"
+                "source": "step.controller.js -> newStep"
             },
         });
     }

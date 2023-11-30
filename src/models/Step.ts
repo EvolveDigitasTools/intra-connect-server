@@ -1,9 +1,8 @@
-import { AllowNull, AutoIncrement, BelongsTo, Column, DataType, Default, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
-import Workflow from "./Workflow";
+import { AllowNull, AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from "sequelize-typescript";
 
 @Table({
     tableName: 'step',
-    timestamps: true
+    timestamps: false
 })
 export default class Step extends Model {
     @AutoIncrement
@@ -12,34 +11,10 @@ export default class Step extends Model {
         type: DataType.INTEGER,
     })
     id!: number;
-
-    @Column({
-        type: DataType.STRING
-    })
-    name!: string;
-
-    @Default('task')
+    
+    @AllowNull(false)
     @Column({
         type: DataType.STRING
     })
     type!: string
-
-    @Column({
-        type: DataType.STRING
-    })
-    description!: string
-
-    @Column({
-        type: DataType.STRING
-    })
-    assigneesDesignation!: string
-
-    @ForeignKey(() => Workflow)
-    @Column({
-        type: DataType.INTEGER
-    })
-    workflowId!: number
-
-    @BelongsTo(() => Workflow)
-    workflow!: Workflow
 }

@@ -1,6 +1,6 @@
 import { AllowNull, AutoIncrement, BelongsTo, Column, DataType, Default, ForeignKey, HasMany, HasOne, Model, PrimaryKey, Table } from "sequelize-typescript";
-import Step from "./Step";
 import Department from "./Department";
+import { WorkflowStep } from "./WorkflowStep";
 
 @Table({
     tableName: 'workflow',
@@ -37,12 +37,12 @@ export default class Workflow extends Model {
     })
     departmentId!: number;
 
-    @HasMany(() => Step)
-    steps!: Step[];
+    @HasMany(() => WorkflowStep)
+    steps!: WorkflowStep[];
 
     @BelongsTo(() => Department)
     department?: Department;
 
-    @HasOne(() => Step)
-    startStep!: Step
+    @HasOne(() => WorkflowStep)
+    startStep!: WorkflowStep
 }
