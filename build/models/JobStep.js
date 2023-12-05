@@ -10,9 +10,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const Department_1 = __importDefault(require("./Department"));
-const Ticket_1 = __importDefault(require("./Ticket"));
-let DepartmentTicket = class DepartmentTicket extends sequelize_typescript_1.Model {
+const Job_1 = __importDefault(require("./Job"));
+const WorkflowStep_1 = __importDefault(require("./WorkflowStep"));
+const JobStepUser_1 = __importDefault(require("./JobStepUser"));
+const JobStepDepartment_1 = __importDefault(require("./JobStepDepartment"));
+let JobStep = class JobStep extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
@@ -20,22 +22,39 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
     })
-], DepartmentTicket.prototype, "id", void 0);
+], JobStep.prototype, "id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Department_1.default),
+    (0, sequelize_typescript_1.ForeignKey)(() => Job_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
-], DepartmentTicket.prototype, "departmentId", void 0);
+], JobStep.prototype, "jobId", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Ticket_1.default),
+    (0, sequelize_typescript_1.ForeignKey)(() => WorkflowStep_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
-], DepartmentTicket.prototype, "ticketId", void 0);
-DepartmentTicket = __decorate([
+], JobStep.prototype, "workflowStepId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => JobStepUser_1.default)
+], JobStep.prototype, "users", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => JobStepDepartment_1.default)
+], JobStep.prototype, "departments", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER
+    })
+], JobStep.prototype, "timeNeeded", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], JobStep.prototype, "timeUnit", void 0);
+JobStep = __decorate([
     (0, sequelize_typescript_1.Table)({
-        tableName: 'department_tickets',
+        tableName: 'job_step',
+        timestamps: false
     })
-], DepartmentTicket);
-exports.default = DepartmentTicket;
+], JobStep);
+exports.default = JobStep;

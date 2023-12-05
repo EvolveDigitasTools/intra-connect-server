@@ -10,9 +10,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const Department_1 = __importDefault(require("./Department"));
-const Ticket_1 = __importDefault(require("./Ticket"));
-let DepartmentTicket = class DepartmentTicket extends sequelize_typescript_1.Model {
+const JobStep_1 = __importDefault(require("./JobStep"));
+const Workflow_1 = __importDefault(require("./Workflow"));
+let Job = class Job extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
@@ -20,22 +20,29 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
     })
-], DepartmentTicket.prototype, "id", void 0);
+], Job.prototype, "id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Department_1.default),
+    (0, sequelize_typescript_1.AllowNull)(false),
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.INTEGER
+        type: sequelize_typescript_1.DataType.STRING
     })
-], DepartmentTicket.prototype, "departmentId", void 0);
+], Job.prototype, "name", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Ticket_1.default),
+    (0, sequelize_typescript_1.ForeignKey)(() => Workflow_1.default),
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.INTEGER
+        type: sequelize_typescript_1.DataType.INTEGER,
     })
-], DepartmentTicket.prototype, "ticketId", void 0);
-DepartmentTicket = __decorate([
+], Job.prototype, "workflowId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => JobStep_1.default)
+], Job.prototype, "steps", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => Workflow_1.default)
+], Job.prototype, "workflow", void 0);
+Job = __decorate([
     (0, sequelize_typescript_1.Table)({
-        tableName: 'department_tickets',
+        tableName: 'job',
+        timestamps: true
     })
-], DepartmentTicket);
-exports.default = DepartmentTicket;
+], Job);
+exports.default = Job;

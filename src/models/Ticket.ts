@@ -2,7 +2,7 @@ import { AllowNull, AutoIncrement, BelongsTo, BelongsToMany, Column, CreatedAt, 
 import User from "./User";
 import Department from "./Department";
 import UserTicket from "./UserTicket";
-import { DepartmentTicket } from "./DepartmentTicket";
+import DepartmentTicket from "./DepartmentTicket";
 import TicketChat from "./TicketChat";
 import File from "./File";
 

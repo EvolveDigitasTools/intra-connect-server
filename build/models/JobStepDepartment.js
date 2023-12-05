@@ -11,8 +11,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Department_1 = __importDefault(require("./Department"));
-const Ticket_1 = __importDefault(require("./Ticket"));
-let DepartmentTicket = class DepartmentTicket extends sequelize_typescript_1.Model {
+const JobStep_1 = __importDefault(require("./JobStep"));
+let JobStepDepartment = class JobStepDepartment extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
@@ -20,22 +20,31 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
     })
-], DepartmentTicket.prototype, "id", void 0);
+], JobStepDepartment.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => Department_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
-], DepartmentTicket.prototype, "departmentId", void 0);
+], JobStepDepartment.prototype, "departmentId", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Ticket_1.default),
+    (0, sequelize_typescript_1.ForeignKey)(() => JobStep_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
-], DepartmentTicket.prototype, "ticketId", void 0);
-DepartmentTicket = __decorate([
-    (0, sequelize_typescript_1.Table)({
-        tableName: 'department_tickets',
+], JobStepDepartment.prototype, "jobStepId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.AllowNull)(false),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
     })
-], DepartmentTicket);
-exports.default = DepartmentTicket;
+], JobStepDepartment.prototype, "role", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => Department_1.default)
+], JobStepDepartment.prototype, "department", void 0);
+JobStepDepartment = __decorate([
+    (0, sequelize_typescript_1.Table)({
+        tableName: 'job_step_department',
+    })
+], JobStepDepartment);
+exports.default = JobStepDepartment;

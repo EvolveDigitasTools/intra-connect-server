@@ -5,7 +5,7 @@ import Ticket from './Ticket';
 @Table({
   tableName: 'department_tickets',
 })
-export class DepartmentTicket extends Model {
+export default class DepartmentTicket extends Model {
   @AutoIncrement
   @PrimaryKey
   @Column({

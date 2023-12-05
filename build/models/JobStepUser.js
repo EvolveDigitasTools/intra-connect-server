@@ -10,9 +10,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const Department_1 = __importDefault(require("./Department"));
-const Ticket_1 = __importDefault(require("./Ticket"));
-let DepartmentTicket = class DepartmentTicket extends sequelize_typescript_1.Model {
+const User_1 = __importDefault(require("./User"));
+const JobStep_1 = __importDefault(require("./JobStep"));
+let JobStepUser = class JobStepUser extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
@@ -20,22 +20,31 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
     })
-], DepartmentTicket.prototype, "id", void 0);
+], JobStepUser.prototype, "id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Department_1.default),
+    (0, sequelize_typescript_1.ForeignKey)(() => User_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
-], DepartmentTicket.prototype, "departmentId", void 0);
+], JobStepUser.prototype, "userId", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Ticket_1.default),
+    (0, sequelize_typescript_1.ForeignKey)(() => JobStep_1.default),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
-], DepartmentTicket.prototype, "ticketId", void 0);
-DepartmentTicket = __decorate([
+], JobStepUser.prototype, "jobStepId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.AllowNull)(false),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], JobStepUser.prototype, "role", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => User_1.default)
+], JobStepUser.prototype, "user", void 0);
+JobStepUser = __decorate([
     (0, sequelize_typescript_1.Table)({
-        tableName: 'department_tickets',
+        tableName: 'job_step_user',
     })
-], DepartmentTicket);
-exports.default = DepartmentTicket;
+], JobStepUser);
+exports.default = JobStepUser;

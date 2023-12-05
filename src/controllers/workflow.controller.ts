@@ -75,6 +75,31 @@ export const getAllWorkflow: RequestHandler = async (req, res) => {
     }
 };
 
+export const getPublishedWorkflows: RequestHandler = async (req, res) => {
+    try {
+        const workflows = await Workflow.findAll({
+            where: { published: true }
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: 'Workflows successfully fetched',
+            data: {
+                workflows
+            }
+        })
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "workflow.controller.js -> getAllWorkflows"
+            },
+        });
+    }
+};
+
 export const getWorkflow: RequestHandler = async (req, res) => {
     try {
         const workflowId = req.params.workflowId;
@@ -88,9 +113,9 @@ export const getWorkflow: RequestHandler = async (req, res) => {
                 include: [{
                     model: Step
                 }]
-            },{
+            }, {
                 model: Department
-            },{
+            }, {
                 model: WorkflowEdge,
                 attributes: ['id', ['workflowSourceStepId', 'source'], ['workflowTargetStepId', 'target']]
             }]

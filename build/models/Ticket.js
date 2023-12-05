@@ -13,7 +13,7 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const User_1 = __importDefault(require("./User"));
 const Department_1 = __importDefault(require("./Department"));
 const UserTicket_1 = __importDefault(require("./UserTicket"));
-const DepartmentTicket_1 = require("./DepartmentTicket");
+const DepartmentTicket_1 = __importDefault(require("./DepartmentTicket"));
 const TicketChat_1 = __importDefault(require("./TicketChat"));
 const File_1 = __importDefault(require("./File"));
 let Ticket = class Ticket extends sequelize_typescript_1.Model {
@@ -57,7 +57,7 @@ __decorate([
     (0, sequelize_typescript_1.BelongsToMany)(() => User_1.default, () => UserTicket_1.default)
 ], Ticket.prototype, "assignees", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsToMany)(() => Department_1.default, () => DepartmentTicket_1.DepartmentTicket)
+    (0, sequelize_typescript_1.BelongsToMany)(() => Department_1.default, () => DepartmentTicket_1.default)
 ], Ticket.prototype, "assignedDepartments", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasOne)(() => TicketChat_1.default)

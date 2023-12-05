@@ -16,7 +16,7 @@ exports.getChats = exports.newChat = exports.getTicket = exports.getTickets = ex
 const User_1 = __importDefault(require("../models/User"));
 const Ticket_1 = __importDefault(require("../models/Ticket"));
 const UserTicket_1 = __importDefault(require("../models/UserTicket"));
-const DepartmentTicket_1 = require("../models/DepartmentTicket");
+const DepartmentTicket_1 = __importDefault(require("../models/DepartmentTicket"));
 const Department_1 = __importDefault(require("../models/Department"));
 const File_1 = __importDefault(require("../models/File"));
 const mail_service_1 = require("../utils/mail.service");
@@ -62,7 +62,7 @@ const newTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         as: 'user'
                     }
                 });
-                const departmentTicket = yield DepartmentTicket_1.DepartmentTicket.create({
+                const departmentTicket = yield DepartmentTicket_1.default.create({
                     departmentId: assigneeDepartment === null || assigneeDepartment === void 0 ? void 0 : assigneeDepartment.id,
                     ticketId: ticket.id
                 });

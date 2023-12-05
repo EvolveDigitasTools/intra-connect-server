@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getWorkflow = exports.getAllWorkflow = exports.newWorkflow = void 0;
+exports.getWorkflow = exports.getPublishedWorkflows = exports.getAllWorkflow = exports.newWorkflow = void 0;
 const Department_1 = __importDefault(require("../models/Department"));
 const Workflow_1 = __importDefault(require("../models/Workflow"));
 const Step_1 = __importDefault(require("../models/Step"));
@@ -81,6 +81,30 @@ const getAllWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getAllWorkflow = getAllWorkflow;
+const getPublishedWorkflows = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const workflows = yield Workflow_1.default.findAll({
+            where: { published: true }
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Workflows successfully fetched',
+            data: {
+                workflows
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "workflow.controller.js -> getAllWorkflows"
+            },
+        });
+    }
+});
+exports.getPublishedWorkflows = getPublishedWorkflows;
 const getWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const workflowId = req.params.workflowId;
