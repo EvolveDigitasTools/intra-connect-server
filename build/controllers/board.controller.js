@@ -13,16 +13,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getBoard = exports.getBoards = exports.newBoard = void 0;
-const User_1 = __importDefault(require("../models/User"));
-const Department_1 = __importDefault(require("../models/Department"));
-const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
+const User_1 = __importDefault(require("../models/auth/User"));
+const Department_1 = __importDefault(require("../models/auth/Department"));
+const UserDepartment_1 = __importDefault(require("../models/auth/UserDepartment"));
 const sequelize_typescript_1 = require("sequelize-typescript");
-const Board_1 = __importDefault(require("../models/Board"));
+const Board_1 = __importDefault(require("../models/boards/Board"));
 const functions_1 = require("../utils/functions");
-const UserBoard_1 = __importDefault(require("../models/UserBoard"));
-const DepartmentBoard_1 = __importDefault(require("../models/DepartmentBoard"));
-const List_1 = __importDefault(require("../models/List"));
-const Card_1 = __importDefault(require("../models/Card"));
+const UserBoard_1 = __importDefault(require("../models/boards/UserBoard"));
+const DepartmentBoard_1 = __importDefault(require("../models/boards/DepartmentBoard"));
+const List_1 = __importDefault(require("../models/boards/List"));
+const Card_1 = __importDefault(require("../models/boards/Card"));
 const newBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {

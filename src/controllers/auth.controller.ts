@@ -1,9 +1,9 @@
 import axios from "axios";
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
-import Department from "../models/Department";
-import User from "../models/User";
-import UserDepartment from "../models/UserDepartment";
+import Department from "../models/auth/Department";
+import User from "../models/auth/User";
+import UserDepartment from "../models/auth/UserDepartment";
 import { Op } from "sequelize";
 
 const JWTKEY: string = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";

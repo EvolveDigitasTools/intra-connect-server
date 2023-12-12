@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.newList = void 0;
-const Board_1 = __importDefault(require("../models/Board"));
-const List_1 = __importDefault(require("../models/List"));
+const Board_1 = __importDefault(require("../models/boards/Board"));
+const List_1 = __importDefault(require("../models/boards/List"));
 const newList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { title } = req.body;

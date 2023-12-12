@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import Joi from "joi";
-import User from "../models/User";
+import User from "../models/auth/User";
 
 export const validateLogin: RequestHandler = async (req, res, next) => {
     try {

@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import Joi from "joi";
-import File from "../models/File";
+import File from "../models/utils/File";
 
 export const validateGetFile: RequestHandler = async (req, res, next) => {
     try {

@@ -13,16 +13,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getChats = exports.newChat = exports.getTicket = exports.getTickets = exports.newTicket = void 0;
-const User_1 = __importDefault(require("../models/User"));
-const Ticket_1 = __importDefault(require("../models/Ticket"));
-const UserTicket_1 = __importDefault(require("../models/UserTicket"));
-const DepartmentTicket_1 = __importDefault(require("../models/DepartmentTicket"));
-const Department_1 = __importDefault(require("../models/Department"));
-const File_1 = __importDefault(require("../models/File"));
+const User_1 = __importDefault(require("../models/auth/User"));
+const Ticket_1 = __importDefault(require("../models/tickets/Ticket"));
+const UserTicket_1 = __importDefault(require("../models/tickets/UserTicket"));
+const DepartmentTicket_1 = __importDefault(require("../models/tickets/DepartmentTicket"));
+const Department_1 = __importDefault(require("../models/auth/Department"));
+const File_1 = __importDefault(require("../models/utils/File"));
 const mail_service_1 = require("../utils/mail.service");
-const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
+const UserDepartment_1 = __importDefault(require("../models/auth/UserDepartment"));
 const sequelize_typescript_1 = require("sequelize-typescript");
-const TicketChat_1 = __importDefault(require("../models/TicketChat"));
+const TicketChat_1 = __importDefault(require("../models/tickets/TicketChat"));
 const functions_1 = require("../utils/functions");
 const newTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;

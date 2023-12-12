@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import Joi from "joi";
-import Department from "../models/Department";
-import User from "../models/User";
+import Department from "../models/auth/Department";
+import User from "../models/auth/User";
 
 export const validateAddAdmin: RequestHandler = async (req, res, next) => {
     try {

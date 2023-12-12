@@ -13,13 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getJob = exports.getAllJobs = exports.newJob = void 0;
-const Job_1 = __importDefault(require("../models/Job"));
-const JobStep_1 = __importDefault(require("../models/JobStep"));
+const Job_1 = __importDefault(require("../models/workflows/jobs/Job"));
+const JobStep_1 = __importDefault(require("../models/workflows/jobs/JobStep"));
 const functions_1 = require("../utils/functions");
-const JobStepUser_1 = __importDefault(require("../models/JobStepUser"));
-const User_1 = __importDefault(require("../models/User"));
-const JobStepDepartment_1 = __importDefault(require("../models/JobStepDepartment"));
-const Department_1 = __importDefault(require("../models/Department"));
+const JobStepUser_1 = __importDefault(require("../models/workflows/jobs/JobStepUser"));
+const User_1 = __importDefault(require("../models/auth/User"));
+const JobStepDepartment_1 = __importDefault(require("../models/workflows/jobs/JobStepDepartment"));
+const Department_1 = __importDefault(require("../models/auth/Department"));
 const newJob = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, nodes } = req.body;
@@ -95,15 +95,14 @@ const getJob = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             where: { id: jobId },
             include: [{
                     model: JobStep_1.default,
-                    attributes: ['timeNeeded', 'timeUnit', 'workflowStepId'],
+                    attributes: ['id', 'timeNeeded', 'timeUnit', 'workflowStepId'],
                     include: [{
                             model: JobStepUser_1.default,
                             attributes: ['role'],
                             include: [{
                                     model: User_1.default,
                                 }]
-                        },
-                        {
+                        }, {
                             model: JobStepDepartment_1.default,
                             include: [{
                                     model: Department_1.default

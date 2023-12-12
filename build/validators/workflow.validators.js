@@ -14,23 +14,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateWorkflowId = exports.validateNewWorkflow = void 0;
 const joi_1 = __importDefault(require("joi"));
-const Department_1 = __importDefault(require("../models/Department"));
-const Workflow_1 = __importDefault(require("../models/Workflow"));
+const Department_1 = __importDefault(require("../models/auth/Department"));
+const Workflow_1 = __importDefault(require("../models/workflows/workflows/Workflow"));
 const validateNewWorkflow = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newWorkflow = joi_1.default.object({
             name: joi_1.default.string().required(),
             description: joi_1.default.string(),
-            department: joi_1.default.string().required()
+            departments: joi_1.default.string().required()
         });
-        yield newWorkflow.validateAsync(req.body);
-        const department = req.body.department;
-        const isDepartmentExist = yield Department_1.default.findOne({ where: { name: department } });
-        if (!isDepartmentExist)
-            return res.status(400).json({
-                success: false,
-                message: "Department with the given name doesn't exist"
-            });
+        const { departments } = yield newWorkflow.validateAsync(req.body);
+        const departmentsArray = JSON.parse(departments);
+        for (let i = 0; i < departmentsArray.length; i++) {
+            const department = departmentsArray[i];
+            const isDepartmentExist = yield Department_1.default.findOne({ where: { name: department } });
+            if (!isDepartmentExist)
+                return res.status(400).json({
+                    success: false,
+                    message: "Department with the given name doesn't exist"
+                });
+        }
         next();
     }
     catch (error) {

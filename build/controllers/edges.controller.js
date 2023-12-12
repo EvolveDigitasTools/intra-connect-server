@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteEdge = exports.newEdge = void 0;
-const WorkflowEdge_1 = __importDefault(require("../models/WorkflowEdge"));
+const WorkflowEdge_1 = __importDefault(require("../models/workflows/workflows/WorkflowEdge"));
 const newEdge = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { source, target } = req.body;

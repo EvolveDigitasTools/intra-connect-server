@@ -13,11 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTicket = exports.getTickets = exports.addAdmin = void 0;
-const User_1 = __importDefault(require("../models/User"));
-const Ticket_1 = __importDefault(require("../models/Ticket"));
-const Department_1 = __importDefault(require("../models/Department"));
-const File_1 = __importDefault(require("../models/File"));
-const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
+const User_1 = __importDefault(require("../models/auth/User"));
+const Ticket_1 = __importDefault(require("../models/tickets/Ticket"));
+const Department_1 = __importDefault(require("../models/auth/Department"));
+const File_1 = __importDefault(require("../models/utils/File"));
+const UserDepartment_1 = __importDefault(require("../models/auth/UserDepartment"));
 const sequelize_typescript_1 = require("sequelize-typescript");
 const addAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateAddAdmin = void 0;
 const joi_1 = __importDefault(require("joi"));
-const Department_1 = __importDefault(require("../models/Department"));
-const User_1 = __importDefault(require("../models/User"));
+const Department_1 = __importDefault(require("../models/auth/Department"));
+const User_1 = __importDefault(require("../models/auth/User"));
 const validateAddAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const addAdmin = joi_1.default.object({

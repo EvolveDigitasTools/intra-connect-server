@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
-import User from "../models/User";
-import Ticket from "../models/Ticket";
-import UserTicket from "../models/UserTicket";
-import DepartmentTicket from "../models/DepartmentTicket";
-import Department from "../models/Department";
-import File from "../models/File";
+import User from "../models/auth/User";
+import Ticket from "../models/tickets/Ticket";
+import UserTicket from "../models/tickets/UserTicket";
+import DepartmentTicket from "../models/tickets/DepartmentTicket";
+import Department from "../models/auth/Department";
+import File from "../models/utils/File";
 import { sendMailSetup } from "../utils/mail.service";
-import UserDepartment from "../models/UserDepartment";
+import UserDepartment from "../models/auth/UserDepartment";
 import { Sequelize } from "sequelize-typescript";
-import TicketChat from "../models/TicketChat";
+import TicketChat from "../models/tickets/TicketChat";
 import { isUser } from "../utils/functions";
 
 interface TicketRequestBody {

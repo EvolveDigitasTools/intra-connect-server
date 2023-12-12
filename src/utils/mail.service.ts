@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 // import jwt from "jsonwebtoken";
 
 import { mailDetails } from "../config/emailConfig";
-import File from "../models/File";
+import File from "../models/utils/File";
 const { MAIL_HOST, MAIL_PORT, MAIL_EMAIL, MAIL_PASS, FRONTEND_BASE_URL } = process.env
 // const JWTKEY: string = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";
 

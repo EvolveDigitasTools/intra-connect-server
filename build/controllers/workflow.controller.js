@@ -13,21 +13,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWorkflow = exports.getPublishedWorkflows = exports.getAllWorkflow = exports.newWorkflow = void 0;
-const Department_1 = __importDefault(require("../models/Department"));
-const Workflow_1 = __importDefault(require("../models/Workflow"));
-const Step_1 = __importDefault(require("../models/Step"));
-const WorkflowStep_1 = __importDefault(require("../models/WorkflowStep"));
+const Department_1 = __importDefault(require("../models/auth/Department"));
+const Workflow_1 = __importDefault(require("../models/workflows/workflows/Workflow"));
+const Step_1 = __importDefault(require("../models/workflows/Step"));
+const WorkflowStep_1 = __importDefault(require("../models/workflows/workflows/WorkflowStep"));
 const sequelize_typescript_1 = require("sequelize-typescript");
-const WorkflowEdge_1 = __importDefault(require("../models/WorkflowEdge"));
+const WorkflowEdge_1 = __importDefault(require("../models/workflows/workflows/WorkflowEdge"));
+const WorkflowDepartment_1 = __importDefault(require("../models/workflows/workflows/WorkflowDepartment"));
 const newWorkflow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, description, department } = req.body;
-        const selectedDepartment = yield Department_1.default.findOne({ where: { name: department } });
+        const { name, description, departments } = req.body;
+        const departmentsArray = JSON.parse(departments);
         const workflow = yield Workflow_1.default.create({
             name,
-            description,
-            departmentId: selectedDepartment === null || selectedDepartment === void 0 ? void 0 : selectedDepartment.id
+            description
         });
+        for (let i = 0; i < departmentsArray.length; i++) {
+            const department = departmentsArray[i];
+            const departmentModal = yield Department_1.default.findOne({ where: { name: department } });
+            yield WorkflowDepartment_1.default.create({
+                workflowId: workflow.id,
+                departmentId: departmentModal === null || departmentModal === void 0 ? void 0 : departmentModal.id
+            });
+        }
         const startStep = yield Step_1.default.findOne({ where: { type: 'start' } });
         const endStep = yield Step_1.default.findOne({ where: { type: 'end' } });
         const workflowStartStep = yield WorkflowStep_1.default.create({

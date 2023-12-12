@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import Joi from "joi";
-import List from "../models/List";
+import List from "../models/boards/List";
 
 export const validateNewCard: RequestHandler = async (req, res, next) => {
     try {

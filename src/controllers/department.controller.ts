@@ -1,9 +1,9 @@
 import { RequestHandler } from "express";
-import User from "../models/User";
-import Ticket from "../models/Ticket";
-import Department from "../models/Department";
-import File from "../models/File";
-import UserDepartment from "../models/UserDepartment";
+import User from "../models/auth/User";
+import Ticket from "../models/tickets/Ticket";
+import Department from "../models/auth/Department";
+import File from "../models/utils/File";
+import UserDepartment from "../models/auth/UserDepartment";
 import { Sequelize } from "sequelize-typescript";
 
 export const addAdmin: RequestHandler = async (req, res) => {

@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
-import User from "../models/User";
-import Department from "../models/Department";
-import UserDepartment from "../models/UserDepartment";
+import User from "../models/auth/User";
+import Department from "../models/auth/Department";
+import UserDepartment from "../models/auth/UserDepartment";
 import { Sequelize } from "sequelize-typescript";
-import Board from "../models/Board";
+import Board from "../models/boards/Board";
 import { isUser } from "../utils/functions";
-import UserBoard from "../models/UserBoard";
-import DepartmentBoard from "../models/DepartmentBoard";
-import List from "../models/List";
-import Card from "../models/Card";
+import UserBoard from "../models/boards/UserBoard";
+import DepartmentBoard from "../models/boards/DepartmentBoard";
+import List from "../models/boards/List";
+import Card from "../models/boards/Card";
 
 export const newBoard: RequestHandler = async (req, res) => {
     try {

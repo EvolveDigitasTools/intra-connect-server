@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import Joi from "joi";
-import Job from "../models/Job";
+import Job from "../models/workflows/jobs/Job";
 
 export const validateNewJob: RequestHandler = async (req, res, next) => {
     try {

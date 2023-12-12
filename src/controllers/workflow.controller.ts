@@ -1,22 +1,31 @@
 import { RequestHandler } from "express";
-import Department from "../models/Department";
-import Workflow from "../models/Workflow";
-import Step from "../models/Step";
-import WorkflowStep from "../models/WorkflowStep";
+import Department from "../models/auth/Department";
+import Workflow from "../models/workflows/workflows/Workflow";
+import Step from "../models/workflows/Step";
+import WorkflowStep from "../models/workflows/workflows/WorkflowStep";
 import { Sequelize } from "sequelize-typescript";
-import WorkflowEdge from "../models/WorkflowEdge";
+import WorkflowEdge from "../models/workflows/workflows/WorkflowEdge";
+import WorkflowDepratment from "../models/workflows/workflows/WorkflowDepartment";
 
 export const newWorkflow: RequestHandler = async (req, res) => {
     try {
-        const { name, description, department } = req.body;
+        const { name, description, departments } = req.body;
 
-        const selectedDepartment = await Department.findOne({ where: { name: department } });
+        const departmentsArray = JSON.parse(departments)
 
         const workflow = await Workflow.create({
             name,
-            description,
-            departmentId: selectedDepartment?.id
+            description
         })
+
+        for (let i = 0; i < departmentsArray.length; i++) {
+            const department = departmentsArray[i];
+            const departmentModal = await Department.findOne({ where: { name: department } });
+            await WorkflowDepratment.create({
+                workflowId: workflow.id,
+                departmentId: departmentModal?.id
+            })
+        }
 
         const startStep = await Step.findOne({ where: { type: 'start' } });
         const endStep = await Step.findOne({ where: { type: 'end' } });

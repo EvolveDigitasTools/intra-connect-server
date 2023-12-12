@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateStepUpdate = exports.validateWorkflowStepId = exports.validateNewTask = void 0;
 const joi_1 = __importDefault(require("joi"));
-const Workflow_1 = __importDefault(require("../models/Workflow"));
-const WorkflowStep_1 = __importDefault(require("../models/WorkflowStep"));
+const Workflow_1 = __importDefault(require("../models/workflows/workflows/Workflow"));
+const WorkflowStep_1 = __importDefault(require("../models/workflows/workflows/WorkflowStep"));
 const validateNewTask = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validateNew = joi_1.default.object({

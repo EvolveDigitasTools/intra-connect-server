@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateJobId = exports.validateNewJob = void 0;
 const joi_1 = __importDefault(require("joi"));
-const Job_1 = __importDefault(require("../models/Job"));
+const Job_1 = __importDefault(require("../models/workflows/jobs/Job"));
 const validateNewJob = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newJob = joi_1.default.object({

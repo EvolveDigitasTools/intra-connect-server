@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import WorkflowEdge from "../models/WorkflowEdge";
+import WorkflowEdge from "../models/workflows/workflows/WorkflowEdge";
 
 export const newEdge: RequestHandler = async (req, res) => {
     try {

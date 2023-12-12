@@ -1,11 +1,11 @@
 import { RequestHandler } from "express";
-import Job from "../models/Job";
-import JobStep from "../models/JobStep";
+import Job from "../models/workflows/jobs/Job";
+import JobStep from "../models/workflows/jobs/JobStep";
 import { isUser } from "../utils/functions";
-import JobStepUser from "../models/JobStepUser";
-import User from "../models/User";
-import JobStepDepartment from "../models/JobStepDepartment";
-import Department from "../models/Department";
+import JobStepUser from "../models/workflows/jobs/JobStepUser";
+import User from "../models/auth/User";
+import JobStepDepartment from "../models/workflows/jobs/JobStepDepartment";
+import Department from "../models/auth/Department";
 
 export const newJob: RequestHandler = async (req, res) => {
     try {
@@ -89,15 +89,14 @@ export const getJob: RequestHandler = async (req, res) => {
             where: { id: jobId },
             include: [{
                 model: JobStep,
-                attributes: ['timeNeeded', 'timeUnit', 'workflowStepId'],
+                attributes: ['id', 'timeNeeded', 'timeUnit', 'workflowStepId'],
                 include: [{
                     model: JobStepUser,
                     attributes: ['role'],
                     include: [{
                         model: User,
                     }]
-                },
-                {
+                }, {
                     model: JobStepDepartment,
                     include: [{
                         model: Department

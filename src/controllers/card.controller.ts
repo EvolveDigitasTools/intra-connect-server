@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import List from "../models/List";
-import Card from "../models/Card";
+import List from "../models/boards/List";
+import Card from "../models/boards/Card";
 
 export const newCard: RequestHandler = async (req, res) => {
     try {

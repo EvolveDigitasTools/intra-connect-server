@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import File from "../models/File";
+import File from "../models/utils/File";
 
 export const getFile: RequestHandler = async (req, res) => {
     try {

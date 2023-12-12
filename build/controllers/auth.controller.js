@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAssignees = exports.newEmployee = exports.logout = exports.login = void 0;
 const axios_1 = __importDefault(require("axios"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const Department_1 = __importDefault(require("../models/Department"));
-const User_1 = __importDefault(require("../models/User"));
-const UserDepartment_1 = __importDefault(require("../models/UserDepartment"));
+const Department_1 = __importDefault(require("../models/auth/Department"));
+const User_1 = __importDefault(require("../models/auth/User"));
+const UserDepartment_1 = __importDefault(require("../models/auth/UserDepartment"));
 const sequelize_1 = require("sequelize");
 const JWTKEY = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

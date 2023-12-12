@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import Joi from "joi";
-import WorkflowStep from "../models/WorkflowStep";
-import WorkflowEdge from "../models/WorkflowEdge";
+import WorkflowStep from "../models/workflows/workflows/WorkflowStep";
+import WorkflowEdge from "../models/workflows/workflows/WorkflowEdge";
 
 export const validateNewEdge: RequestHandler = async (req, res, next) => {
     try {
