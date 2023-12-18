@@ -23,7 +23,7 @@ export const login: RequestHandler = async (req, res) => {
                 grant_type: 'authorization_code',
             }
         });
-        console.log(response, 'response')
+        console.log(response.data, 'response')
         let userInfo: any = jwt.decode(response.data.id_token)
         console.log(userInfo, 'userInfo')
         if (!userInfo) {

@@ -33,7 +33,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 grant_type: 'authorization_code',
             }
         });
-        console.log(response, 'response');
+        console.log(response.data, 'response');
         let userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
         console.log(userInfo, 'userInfo');
         if (!userInfo) {
