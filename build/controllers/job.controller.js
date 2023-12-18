@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.completeJobTask = exports.getJob = exports.getAllJobs = exports.newJob = void 0;
+exports.rejectJobTask = exports.approveJobTask = exports.completeJobTask = exports.getJob = exports.getAllJobs = exports.newJob = void 0;
 const Job_1 = __importDefault(require("../models/workflows/jobs/Job"));
 const JobStep_1 = __importDefault(require("../models/workflows/jobs/JobStep"));
 const functions_1 = require("../utils/functions");
@@ -26,6 +26,7 @@ const WorkflowStep_1 = __importDefault(require("../models/workflows/workflows/Wo
 const WorkflowEdge_1 = __importDefault(require("../models/workflows/workflows/WorkflowEdge"));
 const mail_service_1 = require("../utils/mail.service");
 const JobStepActions_1 = __importDefault(require("../models/workflows/jobs/JobStepActions"));
+const sequelize_1 = require("sequelize");
 const newJob = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, nodes } = req.body;
@@ -169,12 +170,15 @@ const getJob = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             attributes: ['role'],
                             include: [{
                                     model: User_1.default,
+                                    attributes: ['email']
                                 }]
                         }, {
                             model: JobStepDepartment_1.default,
                             include: [{
                                     model: Department_1.default
                                 }]
+                        }, {
+                            model: JobStepActions_1.default
                         }]
                 }]
         });
@@ -260,9 +264,6 @@ const completeJobTask = (req, res) => __awaiter(void 0, void 0, void 0, function
         return res.status(200).json({
             success: true,
             message: 'job task completed successfully',
-            data: {
-                jobStep
-            }
         });
     }
     catch (error) {
@@ -270,9 +271,154 @@ const completeJobTask = (req, res) => __awaiter(void 0, void 0, void 0, function
             success: false,
             message: error.message,
             data: {
-                "source": "job.controller.js -> getAllJobs"
+                "source": "job.controller.js -> completeJobTask"
             },
         });
     }
 });
 exports.completeJobTask = completeJobTask;
+const approveJobTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c, _d, _e;
+    try {
+        const jobStepId = req.params.jobStepId;
+        const { remarks } = req.body;
+        const user = yield User_1.default.findOne({ where: { accessToken: (_c = req.header('Authorization')) === null || _c === void 0 ? void 0 : _c.split(' ')[1] } });
+        yield JobStepActions_1.default.create({
+            jobStepId,
+            actionType: 'approved',
+            actionMessage: remarks,
+            actionUserId: user === null || user === void 0 ? void 0 : user.id
+        });
+        const jobStep = yield JobStep_1.default.findOne({
+            where: {
+                id: jobStepId
+            }
+        });
+        const variables = {
+            jobId: (_d = jobStep === null || jobStep === void 0 ? void 0 : jobStep.jobId) !== null && _d !== void 0 ? _d : 0
+        };
+        const nextStepsRelations = yield WorkflowEdge_1.default.findAll({
+            where: {
+                workflowSourceStepId: jobStep === null || jobStep === void 0 ? void 0 : jobStep.workflowStepId
+            }
+        });
+        const readyToStartStepsRelation = [];
+        for (let i = 0; i < nextStepsRelations.length; i++) {
+            const nextStepRelation = nextStepsRelations[i];
+            const previousStepRelations = yield WorkflowEdge_1.default.findAll({
+                where: {
+                    workflowTargetStepId: nextStepRelation.workflowTargetStepId,
+                    workflowSourceStepId: {
+                        [sequelize_1.Op.ne]: nextStepRelation.workflowSourceStepId
+                    }
+                }
+            });
+            let readyToStart = true;
+            for (let j = 0; j < previousStepRelations.length; j++) {
+                const previousStepRelation = previousStepRelations[j];
+                const previousJobStep = yield JobStep_1.default.findOne({
+                    where: {
+                        jobId: jobStep === null || jobStep === void 0 ? void 0 : jobStep.jobId,
+                        workflowStepId: previousStepRelation.workflowSourceStepId
+                    },
+                    include: {
+                        model: JobStepActions_1.default,
+                        where: {
+                            actionType: 'approved'
+                        }
+                    }
+                });
+                if (((_e = previousJobStep === null || previousJobStep === void 0 ? void 0 : previousJobStep.stepActions.length) !== null && _e !== void 0 ? _e : 0) < 1) {
+                    readyToStart = false;
+                    break;
+                }
+            }
+            if (readyToStart)
+                readyToStartStepsRelation.push(nextStepRelation);
+        }
+        for (let i = 0; i < readyToStartStepsRelation.length; i++) {
+            const readyToStartStepRelation = readyToStartStepsRelation[i];
+            const nextJobStep = yield JobStep_1.default.findOne({
+                where: {
+                    workflowStepId: readyToStartStepRelation.workflowTargetStepId
+                },
+                include: {
+                    model: JobStepUser_1.default,
+                    where: {
+                        role: 'assignee'
+                    },
+                    include: [{
+                            model: User_1.default
+                        }]
+                }
+            });
+            const jobAssignees = nextJobStep === null || nextJobStep === void 0 ? void 0 : nextJobStep.users.map(jobStepUser => {
+                return jobStepUser.user.email;
+            });
+            yield (0, mail_service_1.sendMailSetup)('task-started', jobAssignees, variables);
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'job task approved successfully'
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "job.controller.js -> approveJobTask"
+            },
+        });
+    }
+});
+exports.approveJobTask = approveJobTask;
+const rejectJobTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f, _g;
+    try {
+        const jobStepId = req.params.jobStepId;
+        const { remarks } = req.body;
+        const user = yield User_1.default.findOne({ where: { accessToken: (_f = req.header('Authorization')) === null || _f === void 0 ? void 0 : _f.split(' ')[1] } });
+        yield JobStepActions_1.default.create({
+            jobStepId,
+            actionType: 'declined',
+            actionMessage: remarks,
+            actionUserId: user === null || user === void 0 ? void 0 : user.id
+        });
+        const jobStep = yield JobStep_1.default.findOne({
+            where: {
+                id: jobStepId
+            },
+            include: {
+                model: JobStepUser_1.default,
+                where: {
+                    role: 'assignee'
+                },
+                include: [{
+                        model: User_1.default
+                    }]
+            }
+        });
+        const jobAssignees = jobStep === null || jobStep === void 0 ? void 0 : jobStep.users.map(jobStepUser => {
+            return jobStepUser.user.email;
+        });
+        const variables = {
+            jobId: (_g = jobStep === null || jobStep === void 0 ? void 0 : jobStep.jobId) !== null && _g !== void 0 ? _g : 0
+        };
+        yield (0, mail_service_1.sendMailSetup)('task-declined', jobAssignees, variables);
+        return res.status(200).json({
+            success: true,
+            message: 'job task declined successfully'
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "job.controller.js -> rejectJobTask"
+            },
+        });
+    }
+});
+exports.rejectJobTask = rejectJobTask;

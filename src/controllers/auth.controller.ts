@@ -12,8 +12,6 @@ export const login: RequestHandler = async (req, res) => {
     try {
         const { authCode } = req.params;
 
-        console.log(authCode, 'authcode')
-
         let response = await axios.post('https://accounts.zoho.com/oauth/v2/token', null, {
             params: {
                 code: authCode,
@@ -23,9 +21,7 @@ export const login: RequestHandler = async (req, res) => {
                 grant_type: 'authorization_code',
             }
         });
-        console.log(response.data, 'response')
         let userInfo: any = jwt.decode(response.data.id_token)
-        console.log(userInfo, 'userInfo')
         if (!userInfo) {
             response = await axios.post('https://accounts.zoho.in/oauth/v2/token', null, {
                 params: {

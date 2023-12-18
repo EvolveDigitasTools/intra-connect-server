@@ -10,4 +10,6 @@ router.post('/:workflowId/new', auth_validators_1.validateAuthCode, workflow_val
 router.get('/all', auth_validators_1.validateAuthCode, job_controller_1.getAllJobs);
 router.get('/:jobId', auth_validators_1.validateAuthCode, job_validators_1.validateJobId, job_controller_1.getJob);
 router.post('/:jobStepId/done', auth_validators_1.validateAuthCode, job_validators_1.validateJobStepId, job_validators_1.validateRemarks, job_controller_1.completeJobTask);
+router.post('/:jobStepId/approve', auth_validators_1.validateAuthCode, job_validators_1.validateJobStepId, job_validators_1.validateRemarks, job_controller_1.approveJobTask);
+router.post('/:jobStepId/reject', auth_validators_1.validateAuthCode, job_validators_1.validateJobStepId, job_validators_1.validateRemarks, job_controller_1.rejectJobTask);
 exports.default = router;

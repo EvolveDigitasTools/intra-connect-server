@@ -1,4 +1,4 @@
-import { AllowNull, AutoIncrement, Column, CreatedAt, DataType, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { AllowNull, AutoIncrement, BelongsTo, Column, CreatedAt, DataType, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
 import JobStep from "./JobStep";
 import User from "../../auth/User";
 
@@ -39,4 +39,7 @@ export default class JobStepAction extends Model {
 
     @CreatedAt
     actionTime!: Date
+
+    @BelongsTo(() => User)
+    actionUser!: User
 }

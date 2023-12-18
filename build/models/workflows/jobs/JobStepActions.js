@@ -47,6 +47,9 @@ __decorate([
 __decorate([
     sequelize_typescript_1.CreatedAt
 ], JobStepAction.prototype, "actionTime", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => User_1.default)
+], JobStepAction.prototype, "actionUser", void 0);
 JobStepAction = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: 'job_step_actions',

@@ -33,5 +33,21 @@ exports.mailDetails = {
         priority: 'high',
         actionRoute: "dashboard/job/$jobId",
         actionText: "Approve Task"
+    },
+    'task-declined': {
+        subject: 'Task Declined',
+        title: 'Task Declined',
+        message: 'The task completed by you has been rejected by the approver. Please look into the remarks of the approver and complete tha task by clicking on the link below:-',
+        priority: 'high',
+        actionRoute: "dashboard/job/$jobId",
+        actionText: "Fix Task"
+    },
+    'task-started': {
+        subject: 'Task Started',
+        title: 'New Task',
+        message: 'A new task is started in the ongoing job. Please check the link below and start working on it.',
+        priority: 'high',
+        actionRoute: "dashboard/job/$jobId",
+        actionText: "View Task"
     }
 };

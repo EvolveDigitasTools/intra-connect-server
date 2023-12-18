@@ -23,7 +23,6 @@ const JWTKEY = process.env.JWTKEY || "MYNAME-IS-HELLOWORLD";
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { authCode } = req.params;
-        console.log(authCode, 'authcode');
         let response = yield axios_1.default.post('https://accounts.zoho.com/oauth/v2/token', null, {
             params: {
                 code: authCode,
@@ -33,9 +32,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 grant_type: 'authorization_code',
             }
         });
-        console.log(response.data, 'response');
         let userInfo = jsonwebtoken_1.default.decode(response.data.id_token);
-        console.log(userInfo, 'userInfo');
         if (!userInfo) {
             response = yield axios_1.default.post('https://accounts.zoho.in/oauth/v2/token', null, {
                 params: {
