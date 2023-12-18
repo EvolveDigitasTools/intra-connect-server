@@ -66,6 +66,9 @@ exports.validateWorkflowStepId = validateWorkflowStepId;
 const validateStepUpdate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validateUpdate = joi_1.default.object({
+            name: joi_1.default.string(),
+            description: joi_1.default.string(),
+            assigneesDesignation: joi_1.default.string(),
             position_x: joi_1.default.number(),
             position_y: joi_1.default.number()
         });

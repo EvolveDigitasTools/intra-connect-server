@@ -47,12 +47,12 @@ export const validateAuthCode: RequestHandler = async (req, res, next) => {
         } else {
             accessToken = 'none'
         }
-        const user = await User.findOne({where: {accessToken}})
-        if(!user)
-        return res.status(401).json({
-            success: false,
-            message: 'Unauthorized request'
-        })
+        const user = await User.findOne({ where: { accessToken } })
+        if (!user)
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized request'
+            })
         next();
 
     } catch (error: any) {

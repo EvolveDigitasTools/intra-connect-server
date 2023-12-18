@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateWorkflowStep = exports.newWorkflowStep = void 0;
+exports.deleteWorkflowStep = exports.updateWorkflowStep = exports.newWorkflowStep = void 0;
 const Step_1 = __importDefault(require("../models/workflows/Step"));
 const WorkflowStep_1 = __importDefault(require("../models/workflows/workflows/WorkflowStep"));
 const newWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,9 +47,12 @@ const newWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.newWorkflowStep = newWorkflowStep;
 const updateWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { position_x, position_y } = req.body;
+        const { name, description, assigneesDesignation, position_x, position_y } = req.body;
         const workflowStepId = req.params.workflowStepId;
         const workflowStep = yield WorkflowStep_1.default.update({
+            name,
+            description,
+            assigneesDesignation,
             position_x,
             position_y
         }, { where: { id: Number(workflowStepId) } });
@@ -72,3 +75,23 @@ const updateWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.updateWorkflowStep = updateWorkflowStep;
+const deleteWorkflowStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const workflowStepId = req.params.workflowStepId;
+        yield WorkflowStep_1.default.destroy({ where: { id: Number(workflowStepId) } });
+        return res.status(201).json({
+            success: true,
+            message: 'Workflow Step successfully deleted'
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "step.controller.js -> deleteWorkflowStep"
+            },
+        });
+    }
+});
+exports.deleteWorkflowStep = deleteWorkflowStep;

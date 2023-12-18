@@ -9,4 +9,5 @@ const router = (0, express_1.Router)();
 router.post('/:workflowId/new', auth_validators_1.validateAuthCode, workflow_validators_1.validateWorkflowId, job_validators_1.validateNewJob, job_controller_1.newJob);
 router.get('/all', auth_validators_1.validateAuthCode, job_controller_1.getAllJobs);
 router.get('/:jobId', auth_validators_1.validateAuthCode, job_validators_1.validateJobId, job_controller_1.getJob);
+router.post('/:jobStepId/done', auth_validators_1.validateAuthCode, job_validators_1.validateJobStepId, job_validators_1.validateRemarks, job_controller_1.completeJobTask);
 exports.default = router;

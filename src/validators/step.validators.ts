@@ -53,6 +53,9 @@ export const validateWorkflowStepId: RequestHandler = async (req, res, next) => 
 export const validateStepUpdate: RequestHandler = async (req, res, next) => {
     try {
         const validateUpdate = Joi.object({
+            name: Joi.string(),
+            description: Joi.string(),
+            assigneesDesignation: Joi.string(),
             position_x: Joi.number(),
             position_y: Joi.number()
         })

@@ -37,11 +37,14 @@ export const newWorkflowStep: RequestHandler = async (req, res) => {
 
 export const updateWorkflowStep: RequestHandler = async (req, res) => {
     try {
-        const { position_x, position_y } = req.body;
+        const { name, description, assigneesDesignation, position_x, position_y } = req.body;
 
         const workflowStepId = req.params.workflowStepId
 
         const workflowStep = await WorkflowStep.update({
+            name,
+            description,
+            assigneesDesignation,
             position_x,
             position_y
         }, { where: { id: Number(workflowStepId) } })
@@ -60,6 +63,28 @@ export const updateWorkflowStep: RequestHandler = async (req, res) => {
             message: error.message,
             data: {
                 "source": "step.controller.js -> updateWorkflowStep"
+            },
+        });
+    }
+};
+
+export const deleteWorkflowStep: RequestHandler = async (req, res) => {
+    try {
+        const workflowStepId = req.params.workflowStepId
+
+        await WorkflowStep.destroy({ where: { id: Number(workflowStepId) } })
+
+        return res.status(201).json({
+            success: true,
+            message: 'Workflow Step successfully deleted'
+        })
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "step.controller.js -> deleteWorkflowStep"
             },
         });
     }

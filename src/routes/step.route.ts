@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { validateAuthCode } from "../validators/auth.validators";
-import { validateNewTask, validateWorkflowStepId } from "../validators/step.validators";
-import { newWorkflowStep, updateWorkflowStep } from "../controllers/step.controller";
+import { validateNewTask, validateStepUpdate, validateWorkflowStepId } from "../validators/step.validators";
+import { deleteWorkflowStep, newWorkflowStep, updateWorkflowStep } from "../controllers/step.controller";
 
 const router = Router()
 
 router.post('/:workflowId/new', validateAuthCode, validateNewTask, newWorkflowStep)
-router.put('/:workflowStepId', validateAuthCode, validateWorkflowStepId, updateWorkflowStep)
+router.put('/:workflowStepId', validateAuthCode, validateWorkflowStepId, validateStepUpdate, updateWorkflowStep)
+router.delete('/:workflowStepId', validateAuthCode, validateWorkflowStepId, deleteWorkflowStep)
 
 export default router;

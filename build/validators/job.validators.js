@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateJobId = exports.validateNewJob = void 0;
+exports.validateRemarks = exports.validateJobStepId = exports.validateJobId = exports.validateNewJob = void 0;
 const joi_1 = __importDefault(require("joi"));
 const Job_1 = __importDefault(require("../models/workflows/jobs/Job"));
+const JobStep_1 = __importDefault(require("../models/workflows/jobs/JobStep"));
 const validateNewJob = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newJob = joi_1.default.object({
@@ -63,3 +64,40 @@ const validateJobId = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.validateJobId = validateJobId;
+const validateJobStepId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const jobStepId = req.params.jobStepId;
+        const jobStep = yield JobStep_1.default.findOne({ where: { id: jobStepId } });
+        if (!jobStep)
+            return res.status(400).json({
+                success: false,
+                message: "JobStep with this id don't exist"
+            });
+        next();
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+});
+exports.validateJobStepId = validateJobStepId;
+const validateRemarks = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const remarks = joi_1.default.object({
+            remarks: joi_1.default.string().required()
+        });
+        yield remarks.validateAsync(req.body);
+        next();
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+});
+exports.validateRemarks = validateRemarks;

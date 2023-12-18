@@ -9,7 +9,6 @@ export const validateNewList: RequestHandler = async (req, res, next) => {
         })
         await newList.validateAsync(req.body);
         const { boardId } = req.params;
-        console.log(boardId, req.params)
         const board = await Board.findOne({where: { id: boardId}})
         if(!board)
         return res.status(400).json({

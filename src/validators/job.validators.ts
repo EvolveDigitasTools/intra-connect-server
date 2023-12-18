@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import Joi from "joi";
 import Job from "../models/workflows/jobs/Job";
+import JobStep from "../models/workflows/jobs/JobStep";
 
 export const validateNewJob: RequestHandler = async (req, res, next) => {
     try {
@@ -41,6 +42,42 @@ export const validateJobId: RequestHandler = async (req, res, next) => {
                 message: "Job with this id don't exist"
             })
         next();
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+}
+
+export const validateJobStepId: RequestHandler = async (req, res, next) => {
+    try {
+        const jobStepId = req.params.jobStepId;
+        const jobStep = await JobStep.findOne({ where: { id: jobStepId } })
+        if (!jobStep)
+            return res.status(400).json({
+                success: false,
+                message: "JobStep with this id don't exist"
+            })
+        next();
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+}
+
+export const validateRemarks: RequestHandler = async (req, res, next) => {
+    try {
+        const remarks = Joi.object({
+            remarks: Joi.string().required()
+        })
+        await remarks.validateAsync(req.body);
+        next();
+
     } catch (error: any) {
         return res.status(504).json({
             success: false,

@@ -108,7 +108,7 @@ export const sendMail = async (email: string | string[], mailOptions: MailOption
     }
 };
 
-export const sendMailSetup = async (type: string, sendTo: string | null = null, variables: { [key: string]: string | number } = {}) => {
+export const sendMailSetup = async (type: string, sendTo: string | string[] | null = null, variables: { [key: string]: string | number } = {}) => {
     const mailOptions: MailOptions = {
         subject: mailDetails[type].subject,
         title: getMessage(mailDetails[type].title, variables) ?? "",

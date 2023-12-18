@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getJob = exports.getAllJobs = exports.newJob = void 0;
+exports.completeJobTask = exports.getJob = exports.getAllJobs = exports.newJob = void 0;
 const Job_1 = __importDefault(require("../models/workflows/jobs/Job"));
 const JobStep_1 = __importDefault(require("../models/workflows/jobs/JobStep"));
 const functions_1 = require("../utils/functions");
@@ -20,11 +20,34 @@ const JobStepUser_1 = __importDefault(require("../models/workflows/jobs/JobStepU
 const User_1 = __importDefault(require("../models/auth/User"));
 const JobStepDepartment_1 = __importDefault(require("../models/workflows/jobs/JobStepDepartment"));
 const Department_1 = __importDefault(require("../models/auth/Department"));
+const Workflow_1 = __importDefault(require("../models/workflows/workflows/Workflow"));
+const UserDepartment_1 = __importDefault(require("../models/auth/UserDepartment"));
+const WorkflowStep_1 = __importDefault(require("../models/workflows/workflows/WorkflowStep"));
+const WorkflowEdge_1 = __importDefault(require("../models/workflows/workflows/WorkflowEdge"));
+const mail_service_1 = require("../utils/mail.service");
+const JobStepActions_1 = __importDefault(require("../models/workflows/jobs/JobStepActions"));
 const newJob = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, nodes } = req.body;
         const workflowId = req.params.workflowId;
         const nodesJSON = JSON.parse(nodes);
+        const workflow = yield Workflow_1.default.findOne({
+            where: { id: workflowId },
+            include: [{
+                    model: Department_1.default,
+                    include: [{
+                            model: UserDepartment_1.default,
+                            where: {
+                                isAdmin: true
+                            },
+                            include: [{
+                                    model: User_1.default
+                                }]
+                        }]
+                }]
+        });
+        const workflowStartStep = yield WorkflowStep_1.default.findOne({ where: { workflowId, stepId: 2 } });
+        const workflowInitialSteps = yield WorkflowEdge_1.default.findAll({ where: { workflowId, workflowSourceStepId: workflowStartStep === null || workflowStartStep === void 0 ? void 0 : workflowStartStep.id } });
         const job = yield Job_1.default.create({
             name,
             workflowId
@@ -45,6 +68,51 @@ const newJob = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 const nodeApprover = node.approvers[j];
                 yield createJobStepHandlers(false, nodeApprover, jobStep.id);
             }
+        }
+        let mailSent, newJobMailList = [];
+        workflow === null || workflow === void 0 ? void 0 : workflow.departments.forEach(department => {
+            newJobMailList.push(...department.users.map(userDepartment => { var _a; return (_a = userDepartment.user) === null || _a === void 0 ? void 0 : _a.email; }));
+        });
+        for (let i = 0; i < workflowInitialSteps.length; i++) {
+            const workflowInitialStep = workflowInitialSteps[i];
+            const jobStep = yield JobStep_1.default.findOne({
+                where: { jobId: job.id, workflowStepId: workflowInitialStep.workflowTargetStepId }, include: [{
+                        model: JobStepUser_1.default,
+                        include: [{
+                                model: User_1.default
+                            }]
+                    }, {
+                        model: JobStepDepartment_1.default,
+                        include: [{
+                                model: Department_1.default,
+                                // include: [{
+                                //     model: UserDepartment,
+                                //     where: {
+                                //         isAdmin: true
+                                //     },
+                                //     include: [{
+                                //         model: User
+                                //     }]
+                                // }]
+                            }]
+                    }]
+            });
+            const jobStepAssigneesUsers = jobStep === null || jobStep === void 0 ? void 0 : jobStep.users.filter(user => user.role == 'assignee').map(jobStepUser => { return jobStepUser.user.email; });
+            // const jobStepAssigneesDepartmentsUsers = jobStep?.departments.filter(department => department.role == 'assignee').map(jobStepDepartment => { return jobStepDepartment.department.users })
+            if (jobStepAssigneesUsers)
+                newJobMailList.push(...jobStepAssigneesUsers);
+            // jobStepAssigneesDepartmentsUsers?.forEach(jobStepAssigneeDepartmentUsers => {
+            //     newJobMailList.push(...jobStepAssigneeDepartmentUsers.filter(jobStepUser => jobStepUser.isAdmin == true).map(departmentUser => { return departmentUser.user?.email }))
+            // })
+            newJobMailList = Array.from(new Set(newJobMailList));
+        }
+        for (let i = 0; i < newJobMailList.length; i++) {
+            const newJobMail = newJobMailList[i];
+            const variables = {
+                jobTitle: job.name,
+                jobId: job.id
+            };
+            mailSent = yield (0, mail_service_1.sendMailSetup)('new-job', newJobMail, variables);
         }
         return res.status(201).json({
             success: true,
@@ -156,3 +224,55 @@ const createJobStepHandlers = (isAssignee, handler, jobStepId) => __awaiter(void
         });
     }
 });
+const completeJobTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    try {
+        const jobStepId = req.params.jobStepId;
+        const { remarks } = req.body;
+        const user = yield User_1.default.findOne({ where: { accessToken: (_a = req.header('Authorization')) === null || _a === void 0 ? void 0 : _a.split(' ')[1] } });
+        yield JobStepActions_1.default.create({
+            jobStepId,
+            actionType: 'done',
+            actionMessage: remarks,
+            actionUserId: user === null || user === void 0 ? void 0 : user.id
+        });
+        const jobStep = yield JobStep_1.default.findOne({
+            where: {
+                id: jobStepId
+            },
+            include: {
+                model: JobStepUser_1.default,
+                where: {
+                    role: 'approver'
+                },
+                include: [{
+                        model: User_1.default
+                    }]
+            }
+        });
+        const jobApprovers = jobStep === null || jobStep === void 0 ? void 0 : jobStep.users.map(jobStepUser => {
+            return jobStepUser.user.email;
+        });
+        const variables = {
+            jobId: (_b = jobStep === null || jobStep === void 0 ? void 0 : jobStep.jobId) !== null && _b !== void 0 ? _b : 0
+        };
+        yield (0, mail_service_1.sendMailSetup)('task-completed', jobApprovers, variables);
+        return res.status(200).json({
+            success: true,
+            message: 'job task completed successfully',
+            data: {
+                jobStep
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "job.controller.js -> getAllJobs"
+            },
+        });
+    }
+});
+exports.completeJobTask = completeJobTask;

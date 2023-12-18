@@ -6,12 +6,37 @@ import JobStepUser from "../models/workflows/jobs/JobStepUser";
 import User from "../models/auth/User";
 import JobStepDepartment from "../models/workflows/jobs/JobStepDepartment";
 import Department from "../models/auth/Department";
+import Workflow from "../models/workflows/workflows/Workflow";
+import UserDepartment from "../models/auth/UserDepartment";
+import WorkflowStep from "../models/workflows/workflows/WorkflowStep";
+import WorkflowEdge from "../models/workflows/workflows/WorkflowEdge";
+import { sendMailSetup } from "../utils/mail.service";
+import JobStepAction from "../models/workflows/jobs/JobStepActions";
 
 export const newJob: RequestHandler = async (req, res) => {
     try {
         const { name, nodes } = req.body;
         const workflowId = req.params.workflowId;
         const nodesJSON = JSON.parse(nodes);
+
+        const workflow = await Workflow.findOne({
+            where: { id: workflowId },
+            include: [{
+                model: Department,
+                include: [{
+                    model: UserDepartment,
+                    where: {
+                        isAdmin: true
+                    },
+                    include: [{
+                        model: User
+                    }]
+                }]
+            }]
+        })
+
+        const workflowStartStep = await WorkflowStep.findOne({ where: { workflowId, stepId: 2 } })
+        const workflowInitialSteps = await WorkflowEdge.findAll({ where: { workflowId, workflowSourceStepId: workflowStartStep?.id } })
 
         const job = await Job.create({
             name,
@@ -36,6 +61,52 @@ export const newJob: RequestHandler = async (req, res) => {
                 const nodeApprover = node.approvers[j];
                 await createJobStepHandlers(false, nodeApprover, jobStep.id)
             }
+        }
+        let mailSent, newJobMailList: (string | undefined)[] = []
+        workflow?.departments.forEach(department => {
+            newJobMailList.push(...department.users.map(userDepartment => { return userDepartment.user?.email }))
+        })
+
+        for (let i = 0; i < workflowInitialSteps.length; i++) {
+            const workflowInitialStep = workflowInitialSteps[i];
+            const jobStep = await JobStep.findOne({
+                where: { jobId: job.id, workflowStepId: workflowInitialStep.workflowTargetStepId }, include: [{
+                    model: JobStepUser,
+                    include: [{
+                        model: User
+                    }]
+                }, {
+                    model: JobStepDepartment,
+                    include: [{
+                        model: Department,
+                        // include: [{
+                        //     model: UserDepartment,
+                        //     where: {
+                        //         isAdmin: true
+                        //     },
+                        //     include: [{
+                        //         model: User
+                        //     }]
+                        // }]
+                    }]
+                }]
+            })
+            const jobStepAssigneesUsers = jobStep?.users.filter(user => user.role == 'assignee').map(jobStepUser => { return jobStepUser.user.email })
+            // const jobStepAssigneesDepartmentsUsers = jobStep?.departments.filter(department => department.role == 'assignee').map(jobStepDepartment => { return jobStepDepartment.department.users })
+            if (jobStepAssigneesUsers)
+                newJobMailList.push(...jobStepAssigneesUsers)
+            // jobStepAssigneesDepartmentsUsers?.forEach(jobStepAssigneeDepartmentUsers => {
+            //     newJobMailList.push(...jobStepAssigneeDepartmentUsers.filter(jobStepUser => jobStepUser.isAdmin == true).map(departmentUser => { return departmentUser.user?.email }))
+            // })
+            newJobMailList = Array.from(new Set(newJobMailList))
+        }
+        for (let i = 0; i < newJobMailList.length; i++) {
+            const newJobMail = newJobMailList[i];
+            const variables = {
+                jobTitle: job.name,
+                jobId: job.id
+            }
+            mailSent = await sendMailSetup('new-job', newJobMail, variables);
         }
 
         return res.status(201).json({
@@ -157,3 +228,58 @@ const createJobStepHandlers = async (isAssignee: boolean, handler: string, jobSt
         })
     }
 }
+
+export const completeJobTask: RequestHandler = async (req, res) => {
+    try {
+        const jobStepId = req.params.jobStepId
+        const { remarks } = req.body
+        const user = await User.findOne({ where: { accessToken: req.header('Authorization')?.split(' ')[1] } })
+
+        await JobStepAction.create({
+            jobStepId,
+            actionType: 'done',
+            actionMessage: remarks,
+            actionUserId: user?.id
+        })
+
+        const jobStep = await JobStep.findOne({
+            where: {
+                id: jobStepId
+            },
+            include: {
+                model: JobStepUser,
+                where: {
+                    role: 'approver'
+                },
+                include: [{
+                    model: User
+                }]
+            }
+        })
+
+        const jobApprovers = jobStep?.users.map(jobStepUser => {
+            return jobStepUser.user.email
+        })
+        const variables = {
+            jobId: jobStep?.jobId ?? 0
+        }
+        await sendMailSetup('task-completed', jobApprovers, variables);
+
+        return res.status(200).json({
+            success: true,
+            message: 'job task completed successfully',
+            data: {
+                jobStep
+            }
+        })
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "job.controller.js -> getAllJobs"
+            },
+        });
+    }
+};

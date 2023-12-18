@@ -22,7 +22,6 @@ const validateNewList = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         });
         yield newList.validateAsync(req.body);
         const { boardId } = req.params;
-        console.log(boardId, req.params);
         const board = yield Board_1.default.findOne({ where: { id: boardId } });
         if (!board)
             return res.status(400).json({

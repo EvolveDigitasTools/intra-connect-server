@@ -6,5 +6,6 @@ const step_validators_1 = require("../validators/step.validators");
 const step_controller_1 = require("../controllers/step.controller");
 const router = (0, express_1.Router)();
 router.post('/:workflowId/new', auth_validators_1.validateAuthCode, step_validators_1.validateNewTask, step_controller_1.newWorkflowStep);
-router.put('/:workflowStepId', auth_validators_1.validateAuthCode, step_validators_1.validateWorkflowStepId, step_controller_1.updateWorkflowStep);
+router.put('/:workflowStepId', auth_validators_1.validateAuthCode, step_validators_1.validateWorkflowStepId, step_validators_1.validateStepUpdate, step_controller_1.updateWorkflowStep);
+router.delete('/:workflowStepId', auth_validators_1.validateAuthCode, step_validators_1.validateWorkflowStepId, step_controller_1.deleteWorkflowStep);
 exports.default = router;
