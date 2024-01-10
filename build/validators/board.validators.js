@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGetBoard = exports.validateNewBoard = void 0;
+exports.validateUpdateBoard = exports.validateBoardId = exports.validateNewBoard = void 0;
 const joi_1 = __importDefault(require("joi"));
 const Board_1 = __importDefault(require("../models/boards/Board"));
 const validateNewBoard = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,7 +34,7 @@ const validateNewBoard = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.validateNewBoard = validateNewBoard;
-const validateGetBoard = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const validateBoardId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const getBoard = joi_1.default.object({
             boardId: joi_1.default.number().required()
@@ -57,4 +57,37 @@ const validateGetBoard = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         });
     }
 });
-exports.validateGetBoard = validateGetBoard;
+exports.validateBoardId = validateBoardId;
+const validateUpdateBoard = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const updateBoard = joi_1.default.object({
+            listOrder: joi_1.default.string().required(),
+            lists: joi_1.default.string().required(),
+            cards: joi_1.default.string().required()
+        });
+        const { lists, cards } = yield updateBoard.validateAsync(req.body);
+        const listsJSON = JSON.parse(lists);
+        const cardsJSON = JSON.parse(cards);
+        const listsCheck = joi_1.default.array().items(joi_1.default.object({
+            boardListId: joi_1.default.number().required(),
+            cardOrder: joi_1.default.string().required(),
+            title: joi_1.default.string().required()
+        }));
+        const cardsCheck = joi_1.default.array().items(joi_1.default.object({
+            boardCardId: joi_1.default.number().required(),
+            id: joi_1.default.number().required(),
+            title: joi_1.default.string().required()
+        }));
+        yield listsCheck.validateAsync(listsJSON);
+        yield cardsCheck.validateAsync(cardsJSON);
+        next();
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: [],
+        });
+    }
+});
+exports.validateUpdateBoard = validateUpdateBoard;

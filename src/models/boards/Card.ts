@@ -1,5 +1,4 @@
 import { Model, Table, Column, DataType, ForeignKey, BelongsTo, AutoIncrement, PrimaryKey, CreatedAt, UpdatedAt, AllowNull } from 'sequelize-typescript';
-import List from './List';
 import Board from './Board';
 
 @Table({

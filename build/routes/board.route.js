@@ -7,5 +7,6 @@ const auth_validators_1 = require("../validators/auth.validators");
 const router = (0, express_1.Router)();
 router.post('/new', auth_validators_1.validateAuthCode, board_validators_1.validateNewBoard, board_controller_1.newBoard);
 router.get('/all', auth_validators_1.validateAuthCode, board_controller_1.getBoards);
-router.get('/:boardId', auth_validators_1.validateAuthCode, board_validators_1.validateGetBoard, board_controller_1.getBoard);
+router.get('/:boardId', auth_validators_1.validateAuthCode, board_validators_1.validateBoardId, board_controller_1.getBoard);
+router.post('/:boardId', auth_validators_1.validateAuthCode, board_validators_1.validateBoardId, board_validators_1.validateUpdateBoard, board_controller_1.updateBoard);
 exports.default = router;

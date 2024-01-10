@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBoard = exports.getBoards = exports.newBoard = void 0;
+exports.updateBoard = exports.getBoard = exports.getBoards = exports.newBoard = void 0;
 const User_1 = __importDefault(require("../models/auth/User"));
 const Department_1 = __importDefault(require("../models/auth/Department"));
 const UserDepartment_1 = __importDefault(require("../models/auth/UserDepartment"));
@@ -121,17 +121,23 @@ const getBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const boardId = req.params.boardId;
         const board = yield Board_1.default.findOne({
             attributes: ['id', 'title', 'listOrder'],
-            where: {
-                id: boardId
-            },
+            where: { id: boardId },
             include: [
                 {
                     model: List_1.default,
-                    attributes: ['id', 'boardListId', 'cardOrder', 'title']
+                    attributes: [
+                        ['boardListId', 'id'],
+                        'cardOrder',
+                        'title'
+                    ]
                 },
                 {
                     model: Card_1.default,
-                    attributes: ['id', 'boardCardId', 'title']
+                    attributes: [
+                        ['id', 'mainId'],
+                        ['boardCardId', 'id'],
+                        'title'
+                    ]
                 }
             ]
         });
@@ -154,3 +160,78 @@ const getBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getBoard = getBoard;
+const updateBoard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const boardId = req.params.boardId;
+        const { listOrder, lists, cards } = req.body;
+        const board = yield Board_1.default.update({
+            listOrder
+        }, {
+            where: { id: boardId }
+        });
+        const listsJSON = JSON.parse(lists);
+        const cardsJSON = JSON.parse(cards);
+        const existingLists = yield List_1.default.findAll({ where: { boardId } });
+        const existingCards = yield Card_1.default.findAll({ where: { boardId } });
+        // Process Lists
+        for (const listItem of listsJSON) {
+            const existingList = existingLists.find(list => list.boardListId == listItem.boardListId);
+            if (existingList) {
+                yield existingList.update({
+                    title: listItem.title,
+                    cardOrder: listItem.cardOrder
+                });
+            }
+            else {
+                yield List_1.default.create({
+                    title: listItem.title,
+                    boardListId: listItem.boardListId,
+                    cardOrder: listItem.cardOrder,
+                    boardId
+                });
+            }
+        }
+        // Process Cards
+        for (const cardItem of cardsJSON) {
+            const existingCard = existingCards.find(card => card.id == cardItem.id);
+            if (existingCard) {
+                yield existingCard.update({
+                    title: cardItem.title
+                });
+            }
+            else {
+                yield Card_1.default.create({
+                    title: cardItem.title,
+                    boardCardId: cardItem.boardCardId,
+                    boardId
+                });
+            }
+        }
+        // Delete orphaned lists and cards
+        const listsToDelete = existingLists.filter(list => !listsJSON.some(item => item.boardListId === list.boardListId));
+        const cardsToDelete = existingCards.filter(card => !cardsJSON.some(item => item.boardCardId === card.boardCardId));
+        for (const list of listsToDelete) {
+            yield list.destroy();
+        }
+        for (const card of cardsToDelete) {
+            yield card.destroy();
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Board successfully updated',
+            data: {
+                board
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "board.controller.js -> updateBoard"
+            },
+        });
+    }
+});
+exports.updateBoard = updateBoard;
