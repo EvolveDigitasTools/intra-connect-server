@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getChats = exports.newChat = exports.getTicket = exports.getTickets = exports.newTicket = void 0;
+exports.closeTicket = exports.getChats = exports.newChat = exports.getTicket = exports.getTickets = exports.newTicket = void 0;
 const User_1 = __importDefault(require("../models/auth/User"));
 const Ticket_1 = __importDefault(require("../models/tickets/Ticket"));
 const UserTicket_1 = __importDefault(require("../models/tickets/UserTicket"));
@@ -272,3 +272,32 @@ const getChats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getChats = getChats;
+const closeTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const ticketId = req.params.ticketId;
+        const ticket = yield Ticket_1.default.update({
+            status: 'closed'
+        }, {
+            where: {
+                id: ticketId
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Ticket successfully closed',
+            data: {
+                ticket
+            }
+        });
+    }
+    catch (error) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "ticket.controller.js -> closeTicket"
+            },
+        });
+    }
+});
+exports.closeTicket = closeTicket;

@@ -34,7 +34,7 @@ export const validateNew: RequestHandler = async (req, res, next) => {
         return res.status(504).json({
             success: false,
             message: error.message,
-            data: [],
+            data: {},
         });
     }
 }

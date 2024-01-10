@@ -45,7 +45,7 @@ const validateNew = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         return res.status(504).json({
             success: false,
             message: error.message,
-            data: [],
+            data: {},
         });
     }
 });

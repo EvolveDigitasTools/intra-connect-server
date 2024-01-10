@@ -31,6 +31,7 @@ const connection = new Sequelize({
   username: 'intra-admin',
   password: 'intra-pass',
   database: 'intra_connect',
+  // database: 'intra_test',
   port: 3306,
   models: [User, Department, UserDepartment, DepartmentTicket, File, Ticket, TicketChat, UserTicket, Board, Card, DepartmentBoard, List, UserBoard, Workflow, Step, WorkflowStep, WorkflowEdge, Job, JobStep, JobStepDepartment, JobStepUser, JobStepAction, WorkflowDepratment]
 });

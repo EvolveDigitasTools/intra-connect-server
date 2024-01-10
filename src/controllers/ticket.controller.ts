@@ -281,3 +281,34 @@ export const getChats: RequestHandler = async (req, res) => {
         });
     }
 };
+
+export const closeTicket: RequestHandler = async (req, res) => {
+    try {
+        const ticketId = req.params.ticketId;
+
+        const ticket = await Ticket.update({
+            status: 'closed'
+        }, {
+            where: {
+                id: ticketId
+            }
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: 'Ticket successfully closed',
+            data: {
+                ticket
+            }
+        })
+
+    } catch (error: any) {
+        return res.status(504).json({
+            success: false,
+            message: error.message,
+            data: {
+                "source": "ticket.controller.js -> closeTicket"
+            },
+        });
+    }
+}
