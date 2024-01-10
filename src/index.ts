@@ -21,7 +21,6 @@ const allowedOrigins = ['https://intra-connect.globalplugin.com', 'http://localh
 const options: cors.CorsOptions = {
   origin: allowedOrigins
 };
-
 app.use(cors(options));
 app.use(upload.any());
 
