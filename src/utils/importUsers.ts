@@ -3,7 +3,7 @@ import axios from 'axios';
 import FormData from 'form-data';
 
 // Define the path to the Excel file and the API endpoint
-const pathToExcel = 'D:/jatin/company-projects/intra-connect/Employees data for IT.xlsx'; // Replace with the path to your Excel file
+const pathToExcel = 'D:/jatin/company-projects/intra-connect/intra-connect-server/src/utils/Employees data for IT.xlsx'; // Replace with the path to your Excel file
 const apiEndpoint = 'http://localhost:4000/api/auth/new';
 
 // Function to read Excel file and return formatted user data
