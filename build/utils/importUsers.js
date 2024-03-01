@@ -17,7 +17,7 @@ const axios_1 = __importDefault(require("axios"));
 const form_data_1 = __importDefault(require("form-data"));
 // Define the path to the Excel file and the API endpoint
 const pathToExcel = 'D:/jatin/company-projects/intra-connect/intra-connect-server/src/utils/Employees data for IT.xlsx';
-const apiEndpoint = 'http://localhost:4000/api/auth/new';
+const apiEndpoint = 'https://intra-connect-server.vercel.app/api';
 // Function to read Excel file and return formatted user data
 function readExcelAndPostUsers() {
     var _a;
