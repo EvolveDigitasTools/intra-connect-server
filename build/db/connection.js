@@ -56,7 +56,7 @@ const connection = new sequelize_typescript_1.Sequelize({
     dialectModule: mysql,
     host: '62.72.3.60',
     username: 'intra-admin',
-    password: 'intra-pass',
+    password: 'u@qym73ooE9uM*',
     database: 'intra_connect',
     // database: 'intra_test',
     port: 3306,
